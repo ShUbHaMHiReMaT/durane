@@ -1,56 +1,59 @@
 # NEU-TECH Website & GST Billing
 
 Website and private billing system for **Omkar Industries**, Belagavi, maker of NEU-TECH tyre & tube repair patches.
-Runs entirely on **Cloudflare Pages**:
+Runs entirely on **Cloudflare Workers** (live at https://durane.cipherverse.workers.dev):
 
 | Part | How it runs on Cloudflare |
 |---|---|
-| Public website (home, products, size charts, repair guide, gallery, catalogue, contact, distributor) | Static pages built by `build.py` |
+| Public website (home, products, size charts, repair guide, gallery, catalogue, contact, distributor) | Static files built by `build.py`, served directly |
 | Catalogue PDF | Generated during the build (`/catalogue.pdf`) |
-| Enquiry and distributor forms | Pages Functions, saved in the **D1** database |
-| Billing (GST invoices, PDFs, e-Way Bill, clients, products, enquiries, backups) | Pages Functions + D1, at a **secret address** with a password |
+| Enquiry and distributor forms | Worker code (`src/`), saved in the **D1** database |
+| Billing (GST invoices, PDFs, e-Way Bill, clients, products, enquiries, backups) | Worker code + D1, at a **secret address** with a password |
 
 ---
 
-## Deploy on Cloudflare Pages
+## Deploy on Cloudflare Workers
+
+The project is configured in `wrangler.jsonc` (Worker name `durane`, static files from `dist/`, D1 database bound as `DB`).
 
 ### 1. Create the database (once)
 
 Cloudflare dashboard → **Storage & Databases → D1 → Create database** → name it `neutech`.
+Copy its **Database ID** and paste it into `wrangler.jsonc` in place of `PASTE-YOUR-D1-DATABASE-ID-HERE`.
+(The ID is not a secret; it only works with your Cloudflare login.)
 
-### 2. Create the Pages project
+### 2. Build settings
 
-Cloudflare dashboard → **Workers & Pages → Create → Pages → Connect to Git** → choose this repository.
+Worker `durane` → **Settings → Build**:
 
 | Setting | Value |
 |---|---|
-| Framework preset | `None` |
 | **Build command** | `pip install -r requirements-build.txt && python build.py` |
-| **Build output directory** | `dist` |
+| **Deploy command** | `npx wrangler deploy` |
 | Root directory | *(leave empty)* |
 
-**Environment variables** (Settings → Variables and Secrets), for Production *and* Preview:
+**Build variables** (Settings → Build → Variables and secrets):
 
-| Name | Value | Type |
-|---|---|---|
-| `PYTHON_VERSION` | `3.11` | Text |
-| `SITE_URL` | your site address, e.g. `https://neutech.pages.dev` or `https://www.yourdomain.com` | Text |
-| `ADMIN_PATH` | your secret billing address, e.g. `/office-7qk2mz9x` (6–40 letters, numbers, `-`) | **Secret** |
-| `SETUP_CODE` | a one-time code you choose, used once to create the billing password | **Secret** |
+| Name | Value |
+|---|---|
+| `PYTHON_VERSION` | `3.11` |
+| `SITE_URL` | `https://durane.cipherverse.workers.dev` (or your own domain later) |
 
-Cloudflare installs the Node packages from `package-lock.json` automatically before the build.
+### 3. Runtime secrets
 
-### 3. Connect the database
+Worker `durane` → **Settings → Variables and Secrets → Add**, type **Secret**:
 
-Pages project → **Settings → Bindings → Add → D1 database**:
-variable name **`DB`**, database **`neutech`** (for Production and Preview).
+| Name | Value |
+|---|---|
+| `ADMIN_PATH` | your secret billing address, e.g. `/office-7qk2mz9x` (6–40 letters, numbers, `-`) |
+| `SETUP_CODE` | a one-time code you choose, used once to create the billing password |
 
-Then **Deployments → Retry deployment** so the binding and variables take effect.
-The database tables are created automatically on the first request.
+Push to GitHub (or click **Deployments → Retry build**). The database tables are created automatically on the first request.
 
 ### 4. Set the billing password
 
-Open `https://<your-site><ADMIN_PATH>` (for example `https://neutech.pages.dev/office-7qk2mz9x`),
+Open `https://durane.cipherverse.workers.dev<ADMIN_PATH>`
+(for example `https://durane.cipherverse.workers.dev/office-7qk2mz9x`),
 enter the `SETUP_CODE` and choose a password of at least 10 characters. Bookmark the address.
 
 ### 5. Move your existing data (once)
@@ -67,16 +70,16 @@ Then delete `migration.sql` (it contains your business data). Uploaded logos are
 
 ### 6. Your own domain (optional)
 
-Pages project → **Custom domains → Set up a domain**. Update `SITE_URL` and redeploy.
+Worker `durane` → **Settings → Domains & Routes → Add → Custom domain**. Update `SITE_URL` and redeploy.
 
 ---
 
 ## Keeping your data safe
 
-Everything is stored in the D1 database, which is **separate from the website**: deleting or redeploying the Pages project does not delete it.
+Everything is stored in the D1 database, which is **separate from the website**: deleting or redeploying the Worker does not delete it.
 
 1. **Download a full backup** in billing → **Settings → Backup & Restore**. It contains all bills, clients, products, enquiries, settings, the activity log, e-Way Bill PDFs and logos. Keep copies on your computer and Google Drive. Billing reminds you if you haven't downloaded one in 7 days.
-2. **Restore from backup** puts everything back, into the same site or a brand-new Cloudflare project.
+2. **Restore from backup** puts everything back, into the same site or a brand-new Cloudflare account.
 3. **Activity log** (Settings → Activity) records every change. Deleted bills, clients, products and enquiries can be brought back with **Restore**.
 4. **D1 Time Travel**: Cloudflare can rewind the database to any minute in the last 30 days:
    ```bash
@@ -127,7 +130,7 @@ ADMIN_PATH=/office-local123
 SETUP_CODE=choose-any-code
 ```
 
-Then `npm run dev` and open http://localhost:8788.
+Then `npm run dev` and open http://localhost:8787.
 
 ---
 
@@ -135,8 +138,10 @@ Then `npm run dev` and open http://localhost:8788.
 
 ```
 build.py              builds dist/ (static pages, catalogue PDF, headers, routes) and src/generated/data.json
-functions/            Cloudflare Pages Functions entry point (_middleware.js)
+wrangler.jsonc        Cloudflare Workers configuration (name, static files, D1 binding)
+src/worker.js         Worker entry point
 src/                  server code: billing API, login, invoice PDF, e-Way Bill, enquiry forms, backups
+functions/            entry point if the project is ever deployed with Cloudflare Pages instead
 gst_billing/
   catalog.py          website content: product families, size charts, photos, company details
   templates/site/     website page templates

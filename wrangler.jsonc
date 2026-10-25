@@ -1,0 +1,22 @@
+// Cloudflare Workers configuration (used by "npx wrangler deploy" and Workers Builds).
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "durane",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    "html_handling": "auto-trailing-slash"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "neutech",
+      // paste the Database ID from Cloudflare dashboard -> Storage & Databases -> D1 -> neutech
+      "database_id": "PASTE-YOUR-D1-DATABASE-ID-HERE"
+    }
+  ],
+  "observability": { "enabled": true }
+}

@@ -2,10 +2,11 @@
   "name": "neutech-website",
   "private": true,
   "type": "module",
-  "description": "NEU-TECH website and billing on Cloudflare Pages (Functions + D1)",
+  "description": "NEU-TECH website and billing on Cloudflare Workers (static assets + D1)",
   "scripts": {
     "build": "python build.py",
-    "dev": "wrangler pages dev dist --d1 DB=neutech-local --compatibility-date=2026-10-01"
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
   },
   "dependencies": {
     "pdf-lib": "^1.17.1",

@@ -7,7 +7,7 @@
 - Exports shared data (states, bill types, starting companies and products) to src/generated/data.json
   for the billing code that runs as Cloudflare Pages Functions.
 
-Environment: SITE_URL (e.g. https://neutech.pages.dev or your own domain) is used for canonical links and
+Environment: SITE_URL (e.g. https://durane.cipherverse.workers.dev or your own domain) is used for canonical links and
 the sitemap.
 """
 import json
@@ -29,7 +29,7 @@ import catalogue_pdf  # noqa: E402
 import db  # noqa: E402
 import site_pages  # noqa: E402
 
-SITE_URL = (os.environ.get("SITE_URL") or os.environ.get("CF_PAGES_URL") or "https://neutech.pages.dev").rstrip("/")
+SITE_URL = (os.environ.get("SITE_URL") or os.environ.get("CF_PAGES_URL") or "https://durane.cipherverse.workers.dev").rstrip("/")
 
 
 def write(rel, content, mode="w"):
