@@ -15,7 +15,7 @@
       "binding": "DB",
       "database_name": "neutech",
       // paste the Database ID from Cloudflare dashboard -> Storage & Databases -> D1 -> neutech
-      "database_id": "PASTE-YOUR-D1-DATABASE-ID-HERE"
+      "database_id": "a346fe6b-c70c-454e-a8a3-19120beaffe6"
     }
   ],
   "observability": { "enabled": true }
