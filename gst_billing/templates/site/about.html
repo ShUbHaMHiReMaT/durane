@@ -1,0 +1,63 @@
+{% extends "site/base.html" %}
+{% block title %}About Us | NEU-TECH by Omkar Industries, Belagavi{% endblock %}
+{% block description %}Omkar Industries, Belagavi, makes and supplies NEU-TECH tyre and tube cut repair patches and repair solutions for bias, radial, tractor and earthmover tyres.{% endblock %}
+{% block content %}
+<section class="page-hero">
+  <div class="wrap">
+    <nav class="crumbs"><a href="/">Home</a> / <span>About Us</span></nav>
+    <h1>About Omkar Industries</h1>
+    <p class="lead">The company behind NEU-TECH tyre &amp; tube repair products.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap split">
+    <div>
+      <p class="eyebrow">Who we are</p>
+      <h2>Tyre repair specialists from Belagavi</h2>
+      {% for p in intro.paragraphs %}<p>{{ p }}</p>{% endfor %}
+      <p>We work directly with tyre workshops, retreaders, dealers and distributors. Because we make and supply the products ourselves, our customers get consistent quality, ready stock in every size and a direct line to the manufacturer.</p>
+    </div>
+    <div class="split-img"><img src="/static/catalog/neu-tech-full-range-precision-technology.jpg" alt="The complete NEU-TECH product range" loading="lazy"></div>
+  </div>
+</section>
+
+<section class="section section-alt">
+  <div class="wrap">
+    <div class="section-head"><p class="eyebrow">What we stand for</p><h2>Our commitment</h2></div>
+    <div class="value-grid">
+      <div class="value"><h3>Quality</h3><p>Every patch is made to bond strongly and hold the injury closed for the life of the repair.</p></div>
+      <div class="value"><h3>Safety</h3><p>Correct construction for each tyre type, so the repaired tyre carries its load safely.</p></div>
+      <div class="value"><h3>Value</h3><p>A good repair saves the cost of a new tyre and gets the vehicle back to work quickly.</p></div>
+      <div class="value"><h3>Service</h3><p>Direct support from the manufacturer for workshops, dealers and distributors.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head"><p class="eyebrow">Why NEU-TECH</p><h2>What makes our patches different</h2></div>
+    <div class="strength-grid strength-grid-3">
+      {% for ic, title, text in strengths %}
+      <div class="strength">{{ icon(ic, 26) }}<div><h3>{{ title }}</h3><p>{{ text }}</p></div></div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section section-dark">
+  <div class="wrap split">
+    <div>
+      <p class="eyebrow">Leadership</p>
+      <h2>{{ company.person }}</h2>
+      <p class="muted-light">{{ company.role }}, {{ company.name }}</p>
+      <p class="muted-light">Omkar Industries is run by its proprietor, who leads manufacturing, quality and customer relationships. Customers and partners can reach the team directly by phone or WhatsApp.</p>
+      <div class="hero-actions">
+        <a class="btn btn-red" href="tel:+91{{ company.phone }}">{{ icon("phone", 18) }} {{ company.phone_display }}</a>
+        <a class="btn btn-ghost-light" href="/contact">Contact Us</a>
+      </div>
+    </div>
+    <div class="split-img"><img src="/static/catalog/neu-tech-product-display-stand.jpg" alt="NEU-TECH product display" loading="lazy"></div>
+  </div>
+</section>
+{% endblock %}

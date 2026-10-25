@@ -1,0 +1,55 @@
+{% extends "site/base.html" %}
+{% from "site/_spec.html" import cure_cards %}
+{% block title %}Products | NEU-TECH Bias, Radial & Plug Repair Patches{% endblock %}
+{% block description %}Full NEU-TECH range: BP bias patches, RD radial patches for cars, trucks, tractors and earthmovers, Max Grip plug patches, chemicals and repair tools. Search every size.{% endblock %}
+{% block content %}
+<section class="page-hero">
+  <div class="wrap">
+    <nav class="crumbs"><a href="/">Home</a> / <span>Products</span></nav>
+    <h1>Our Products</h1>
+    <p class="lead">Every NEU-TECH repair product in one place. Search by size code or browse by family.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="search-box">
+      {{ icon("search", 20) }}
+      <input id="product-search" type="search" placeholder="Search a size or code, e.g. BP-4, RD 35 HD, NTR033, plug" aria-label="Search products">
+    </div>
+    <div id="search-results" class="search-results" hidden>
+      <div class="table-scroll"><table class="spec">
+        <thead><tr><th>Code</th><th>Product</th><th>Chemical Cure</th><th>Size</th><th>Family</th><th>Qty / Box</th><th></th></tr></thead>
+        <tbody>
+        {% for f in families %}{% for p in specs.get(f.slug, []) %}
+          <tr data-q="{{ (p.code ~ ' ' ~ p.name ~ ' ' ~ (p.chem_code or '') ~ ' ' ~ (p.chem_name or '') ~ ' ' ~ f.title ~ ' ' ~ p.name|replace('-', ' '))|lower }}">
+            <td>{{ p.code }}</td><td><b>{{ p.name }}</b></td><td>{{ p.chem_name or "" }}</td><td>{{ p.size }}</td>
+            <td><a href="/products/{{ f.slug }}">{{ f.title }}</a></td><td>{{ p.qty }}</td>
+            <td><button class="add-btn" data-add="{{ p.name }}">{{ icon("plus", 16) }}<span class="add-label">Enquire</span></button></td></tr>
+        {% endfor %}{% endfor %}
+        </tbody>
+      </table></div>
+      <p class="muted" id="no-results" hidden>No products match your search. <a href="/contact#enquiry">Ask us</a> and we will help.</p>
+    </div>
+
+    <div id="family-grid">
+    <div class="family-grid">
+      {% for f in families %}
+      <a class="family-card" href="/products/{{ f.slug }}">
+        <div class="fc-img"><img src="/static/catalog/{{ f.images[0] }}" alt="{{ f.title }}" loading="lazy"></div>
+        <div class="fc-body">
+          <span class="fc-tag">{{ icon(f.icon, 16) }} {{ f.short }}</span>
+          <h3>{{ f.title }}</h3>
+          <p>{{ f.summary }}</p>
+          <ul class="chips">{% for u in f.uses %}<li>{{ u }}</li>{% endfor %}</ul>
+          <span class="fc-more">{% if specs.get(f.slug) %}{{ specs[f.slug]|length }} sizes · {% endif %}View details {{ icon("arrow", 16) }}</span>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    <div class="section-head" style="margin-top:64px"><p class="eyebrow">Choose your cure</p><h2>Every patch in Versa Cure and Chemical Cure</h2></div>
+    {{ cure_cards(cure_types) }}
+    </div>
+  </div>
+</section>
+{% endblock %}

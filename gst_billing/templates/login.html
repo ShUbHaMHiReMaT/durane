@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>{{ "Set up billing" if mode == "setup" else "Billing login" }} | NEU-TECH</title>
+  <link rel="icon" href="/static/catalog/omkar-industries-logo.png">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="login-page">
+  <form class="login-card" method="post">
+    <img src="/static/catalog/omkar-industries-logo.png" alt="Omkar Industries" class="login-logo">
+    {% if mode == "setup" %}
+      <h1>Set your billing password</h1>
+      <p class="hint">This password protects your bills, clients and prices. Choose one only you know (at least 10 characters).</p>
+    {% else %}
+      <h1>Billing login</h1>
+      <p class="hint">Enter the admin password to open billing.</p>
+    {% endif %}
+    {% if error %}<p class="login-error">{{ error }}</p>{% endif %}
+    {% if not blocked %}
+      <input type="text" name="username" value="admin" autocomplete="username" hidden>
+
+      {% if mode == "setup" %}<label>Setup code (shown in the app's black console window)<input name="code" autocomplete="off" required autofocus></label>{% endif %}
+      <label>Password<input type="password" name="password" autocomplete="{{ 'new-password' if mode == 'setup' else 'current-password' }}" required {{ '' if mode == 'setup' else 'autofocus' }}></label>
+      {% if mode == "setup" %}<label>Confirm password<input type="password" name="password2" autocomplete="new-password" required></label>{% endif %}
+      <button class="primary" type="submit">{{ "Save and open billing" if mode == "setup" else "Log in" }}</button>
+    {% endif %}
+    <a class="login-back" href="/">&larr; Back to website</a>
+  </form>
+</body>
+</html>

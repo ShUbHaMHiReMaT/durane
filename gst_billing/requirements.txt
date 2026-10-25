@@ -1,0 +1,6 @@
+flask==3.0.3
+werkzeug==3.0.3
+reportlab==5.0.1
+pillow==10.4.0
+pymupdf==1.28.2
+waitress==3.0.2

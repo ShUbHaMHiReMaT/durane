@@ -1,0 +1,34 @@
+{% extends "site/base.html" %}
+{% from "site/_form.html" import enquiry_form %}
+{% block title %}Become a Distributor | NEU-TECH Tyre Repair Patches{% endblock %}
+{% block description %}Become a NEU-TECH distributor or dealer. Complete tyre and tube repair range, ready stock and direct manufacturer support from Omkar Industries, Belagavi.{% endblock %}
+{% block content %}
+<section class="page-hero">
+  <div class="wrap">
+    <nav class="crumbs"><a href="/">Home</a> / <span>Become a Distributor</span></nav>
+    <h1>Become a NEU-TECH Distributor</h1>
+    <p class="lead">Grow your business with a complete tyre and tube repair range from the manufacturer.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap contact-layout">
+    <div>
+      <p class="eyebrow">Why partner with us</p>
+      <h2>Everything your customers need, from one brand</h2>
+      <ul class="benefits">
+        <li>{{ icon("layers", 26) }}<div><h3>Complete range</h3><p>Bias, radial, OTR, tractor and plug patches, plus chemicals and tools.</p></div></li>
+        <li>{{ icon("box", 26) }}<div><h3>Ready stock</h3><p>Every size packed by the box, ready to sell to workshops.</p></div></li>
+        <li>{{ icon("rupee", 26) }}<div><h3>Distributor pricing</h3><p>Dedicated distributor price list with healthy margins.</p></div></li>
+        <li>{{ icon("users", 26) }}<div><h3>Direct support</h3><p>Talk directly to the manufacturer for stock, dispatch and product questions.</p></div></li>
+        <li>{{ icon("file", 26) }}<div><h3>Sales material</h3><p>Product catalogue, size charts and product photos for your shop.</p></div></li>
+      </ul>
+    </div>
+    <div class="form-card" id="apply">
+      <h2>Apply now</h2>
+      <p class="muted">Share a few details and our team will call you with distributor terms and the price list.</p>
+      {{ enquiry_form("/distributor#apply", data, error, sent, kind="distributor") }}
+    </div>
+  </div>
+</section>
+{% endblock %}

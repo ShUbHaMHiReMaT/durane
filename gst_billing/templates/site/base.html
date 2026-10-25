@@ -1,0 +1,144 @@
+{% from "site/_icons.html" import icon %}<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}NEU-TECH Tyre & Tube Repair Patches | Omkar Industries, Belagavi{% endblock %}</title>
+  <meta name="description" content="{% block description %}NEU-TECH tyre and tube repair patches by Omkar Industries, Belagavi: bias patches, radial patches for cars, trucks, tractors and earthmovers, Max Grip plug patches, vulcanizing solution and repair tools.{% endblock %}">
+  <meta name="theme-color" content="#121417">
+  <link rel="canonical" href="{{ request.base_url }}">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="NEU-TECH by Omkar Industries">
+  <meta property="og:title" content="{{ self.title() }}">
+  <meta property="og:description" content="{{ self.description() }}">
+  <meta property="og:image" content="{{ request.url_root }}static/catalog/{% block og_image %}neu-tech-full-range-display.jpg{% endblock %}">
+  <link rel="icon" href="/static/catalog/{{ logo }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/site.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Omkar Industries",
+    "brand": {"@type": "Brand", "name": "NEU-TECH"},
+    "description": "Manufacturer and supplier of NEU-TECH tyre and tube repair patches and repair solutions.",
+    "telephone": "+91{{ company.phone }}",
+    "email": "{{ company.email }}",
+    "image": "{{ request.url_root }}static/catalog/{{ logo }}",
+    "url": "{{ request.url_root }}",
+    "address": {"@type": "PostalAddress", "streetAddress": "{{ company.address_lines[0] }}, {{ company.address_lines[1] }}",
+                "addressLocality": "Belagavi", "addressRegion": "Karnataka", "postalCode": "590016", "addressCountry": "IN"}
+  }
+  </script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="topbar">
+  <div class="wrap topbar-in">
+    <span class="tb-item">{{ icon("pin", 15) }} Belagavi, Karnataka</span>
+    <a class="tb-item" href="tel:+91{{ company.phone }}">{{ icon("phone", 15) }} {{ company.phone_display }}</a>
+    <a class="tb-item hide-sm" href="mailto:{{ company.email }}">{{ icon("mail", 15) }} {{ company.email }}</a>
+    <a class="tb-item tb-right" href="/distributor">{{ icon("users", 15) }} Become a Distributor</a>
+  </div>
+</div>
+
+<header class="header" id="header">
+  <div class="wrap header-in">
+    <a class="brand" href="/" aria-label="NEU-TECH by Omkar Industries, home">
+      <img src="/static/catalog/{{ logo }}" alt="" width="46" height="46">
+      <span class="brand-text"><b>NEU-TECH</b><small>Tyre &amp; Tube Repair Products</small></span>
+    </a>
+    {% set path = request.path %}
+    <nav class="nav" id="nav" aria-label="Main">
+      <a href="/" class="{{ 'on' if path == '/' }}">Home</a>
+      <a href="/about" class="{{ 'on' if path == '/about' }}">About Us</a>
+      <div class="dd">
+        <a href="/products" class="{{ 'on' if path.startswith('/products') }}">Products {{ icon("chevron", 16) }}</a>
+        <div class="dd-menu">
+          {% for f in families %}<a href="/products/{{ f.slug }}">{{ icon(f.icon, 18) }}<span>{{ f.title }}<small>{{ f.short }}</small></span></a>{% endfor %}
+        </div>
+      </div>
+      <a href="/repair-guide" class="{{ 'on' if path == '/repair-guide' }}">Repair Guide</a>
+      <a href="/gallery" class="{{ 'on' if path == '/gallery' }}">Gallery</a>
+      <a href="/catalogue" class="{{ 'on' if path == '/catalogue' }}">Catalogue</a>
+      <a href="/contact" class="{{ 'on' if path == '/contact' }}">Contact</a>
+      <a href="/distributor" class="nav-mobile-only {{ 'on' if path == '/distributor' }}">Become a Distributor</a>
+    </nav>
+    <a class="btn btn-red header-cta" href="/contact#enquiry">Get a Quote</a>
+    <button class="menu-btn" id="menu-btn" aria-label="Open menu" aria-expanded="false" aria-controls="nav">{{ icon("menu") }}</button>
+  </div>
+</header>
+
+<main id="main">{% block content %}{% endblock %}</main>
+
+<section class="cta-band">
+  <div class="wrap cta-in">
+    <div>
+      <h2>Need patches for your workshop or dealership?</h2>
+      <p>Tell us what you need and we will reply with sizes, availability and pricing.</p>
+    </div>
+    <div class="cta-actions">
+      <a class="btn btn-red btn-lg" href="/contact#enquiry">Send an Enquiry {{ icon("arrow", 18) }}</a>
+      <a class="btn btn-ghost-light btn-lg" href="https://wa.me/{{ company.whatsapp }}?text={{ 'Hello Omkar Industries, I would like to know about NEU-TECH repair patches.'|urlencode }}" target="_blank" rel="noopener">{{ icon("chat", 18) }} WhatsApp Us</a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="wrap footer-grid">
+    <div class="f-brand">
+      <a class="brand brand-light" href="/"><img src="/static/catalog/{{ logo }}" alt="" width="46" height="46">
+        <span class="brand-text"><b>NEU-TECH</b><small>by Omkar Industries</small></span></a>
+      <p>Tyre and tube cut repair patches and repair solutions for bias, radial, tractor and earthmover tyres. Made and supplied from Belagavi, Karnataka.</p>
+    </div>
+    <div>
+      <h3>Products</h3>
+      <ul>{% for f in families %}<li><a href="/products/{{ f.slug }}">{{ f.title }}</a></li>{% endfor %}</ul>
+    </div>
+    <div>
+      <h3>Company</h3>
+      <ul>
+        <li><a href="/about">About Us</a></li><li><a href="/repair-guide">Repair Guide</a></li>
+        <li><a href="/gallery">Gallery</a></li><li><a href="/catalogue">Product Catalogue</a></li>
+        <li><a href="/catalogue.pdf" target="_blank">Download Catalogue (PDF)</a></li>
+        <li><a href="/distributor">Become a Distributor</a></li><li><a href="/contact">Contact Us</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3>Contact</h3>
+      <ul class="f-contact">
+        <li>{{ icon("pin", 18) }}<span><b>Head Office</b><br>{{ company.head_office_lines|join("<br>")|safe }}</span></li>
+        <li>{{ icon("pin", 18) }}<span><b>Industrial Unit</b><br>{{ company.address_lines|join("<br>")|safe }}</span></li>
+        <li>{{ icon("phone", 18) }}<a href="tel:+91{{ company.phone }}">{{ company.phone_display }}</a></li>
+        <li>{{ icon("mail", 18) }}<a href="mailto:{{ company.email }}">{{ company.email }}</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">
+    <span>&copy; {{ year }} Omkar Industries. All rights reserved. NEU-TECH is a brand of Omkar Industries.</span>
+    <span>GSTIN {{ company.gstin }}</span>
+  </div>
+</footer>
+
+<div class="float-actions" aria-label="Quick contact">
+  <a class="fab fab-wa" href="https://wa.me/{{ company.whatsapp }}" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">{{ icon("chat", 26) }}</a>
+</div>
+<nav class="mobile-bar" aria-label="Quick actions">
+  <a href="tel:+91{{ company.phone }}">{{ icon("phone", 20) }}<span>Call</span></a>
+  <a href="https://wa.me/{{ company.whatsapp }}" target="_blank" rel="noopener">{{ icon("chat", 20) }}<span>WhatsApp</span></a>
+  <a href="/contact#enquiry" class="mb-quote">{{ icon("clipboard", 20) }}<span>Get Quote <em class="basket-count" hidden></em></span></a>
+</nav>
+
+<div class="lightbox" id="lightbox" hidden>
+  <button class="lb-close" aria-label="Close">{{ icon("x", 28) }}</button>
+  <button class="lb-prev" aria-label="Previous">{{ icon("arrow-left", 28) }}</button>
+  <figure><img alt=""><figcaption></figcaption></figure>
+  <button class="lb-next" aria-label="Next">{{ icon("arrow", 28) }}</button>
+</div>
+
+<script src="/static/site.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+{% from "site/_icons.html" import icon %}
+{# Enquiry form used on the contact and distributor pages #}
+{% macro enquiry_form(action, data, error, sent, kind="enquiry") -%}
+{% if sent %}
+<div class="form-done" role="status">
+  {{ icon("check", 36) }}
+  <h3>Thank you, we have received your {{ "application" if kind == "distributor" else "enquiry" }}.</h3>
+  <p>Our team will contact you on the phone number you gave. For anything urgent, call or WhatsApp
+     <a href="tel:+91{{ company.phone }}">{{ company.phone_display }}</a>.</p>
+</div>
+{% else %}
+<form class="form" method="post" action="{{ action }}" novalidate>
+  {% if error %}<p class="form-error" role="alert">{{ error }}</p>{% endif %}
+  <div class="form-grid">
+    <label>Your name *<input name="name" required autocomplete="name" value="{{ data.name or '' }}"></label>
+    <label>Phone / WhatsApp *<input name="phone" type="tel" inputmode="tel" required autocomplete="tel" value="{{ data.phone or '' }}"></label>
+    <label>{{ "Firm / shop name *" if kind == "distributor" else "Company / workshop" }}<input name="company" autocomplete="organization" value="{{ data.company or '' }}"></label>
+    <label>E-mail<input name="email" type="email" autocomplete="email" value="{{ data.email or '' }}"></label>
+    <label>City / district<input name="city" autocomplete="address-level2" value="{{ data.city or '' }}"></label>
+    {% if kind == "distributor" %}
+    <label>Area you can cover<input name="products" placeholder="e.g. Belagavi and Dharwad districts" value="{{ data.products or '' }}"></label>
+    {% else %}
+    <label>Products needed<input name="products" id="basket-field" placeholder="e.g. BP 3, RD 35, Plug Patch 6MM" value="{{ data.products or '' }}"></label>
+    {% endif %}
+    <label class="full">{{ "About your business" if kind == "distributor" else "Message" }}
+      <textarea name="message" rows="4" placeholder="{{ 'Current business, shop or warehouse, brands you deal in' if kind == 'distributor' else 'Sizes, quantities, delivery location' }}">{{ data.message or '' }}</textarea></label>
+    <label class="hp" aria-hidden="true">Website<input name="website" tabindex="-1" autocomplete="off"></label>
+  </div>
+  <button class="btn btn-red btn-lg" type="submit">{{ "Submit Application" if kind == "distributor" else "Send Enquiry" }} {{ icon("arrow", 18) }}</button>
+  <p class="form-note">We use your details only to reply to you.</p>
+</form>
+{% endif %}
+{%- endmacro %}

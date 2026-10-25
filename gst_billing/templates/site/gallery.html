@@ -1,0 +1,21 @@
+{% extends "site/base.html" %}
+{% block title %}Gallery | NEU-TECH Tyre & Tube Repair Products{% endblock %}
+{% block description %}Photos of the NEU-TECH range: bias and radial patches, Max Grip plug patches, chemicals, tools and repair kits.{% endblock %}
+{% block content %}
+<section class="page-hero">
+  <div class="wrap">
+    <nav class="crumbs"><a href="/">Home</a> / <span>Gallery</span></nav>
+    <h1>Gallery</h1>
+    <p class="lead">The NEU-TECH range in pictures. Tap any photo to view it full size.</p>
+  </div>
+</section>
+<section class="section">
+  <div class="wrap">
+    <div class="gallery-grid gallery-full">
+      {% for img in images %}
+      <a class="g-item" href="/static/catalog/{{ img }}" data-lightbox="all"><img src="/static/catalog/{{ img }}" alt="{{ caption(img) }}" loading="lazy"><span>{{ caption(img) }}</span></a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,69 @@
+{% extends "site/base.html" %}
+{% from "site/_spec.html" import spec_table, cure_cards %}
+{% block title %}{{ fam.title }} ({{ fam.short }}) | NEU-TECH{% endblock %}
+{% block description %}{{ fam.summary }} NEU-TECH by Omkar Industries, Belagavi.{% endblock %}
+{% block og_image %}{{ fam.images[0] }}{% endblock %}
+{% block content %}
+<section class="page-hero">
+  <div class="wrap">
+    <nav class="crumbs"><a href="/">Home</a> / <a href="/products">Products</a> / <span>{{ fam.title }}</span></nav>
+    <p class="eyebrow">{{ fam.short }}</p>
+    <h1>{{ fam.title }}</h1>
+    <p class="lead">{{ fam.summary }}</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap product-layout">
+    <div class="product-media">
+      <a class="pm-main" href="/static/catalog/{{ fam.images[0] }}" data-lightbox="fam"><img src="/static/catalog/{{ fam.images[0] }}" alt="{{ caption(fam.images[0]) }}"></a>
+      {% if fam.images|length > 1 %}
+      <div class="pm-thumbs">
+        {% for img in fam.images[1:] %}<a href="/static/catalog/{{ img }}" data-lightbox="fam"><img src="/static/catalog/{{ img }}" alt="{{ caption(img) }}" loading="lazy"></a>{% endfor %}
+      </div>
+      {% endif %}
+    </div>
+    <div class="product-info">
+      {% for p in fam.text %}<p>{{ p }}</p>{% endfor %}
+      <h2 class="h-small">Key features</h2>
+      <ul class="ticks">{% for pt in fam.points %}<li>{{ icon("check", 18) }}{{ pt }}</li>{% endfor %}</ul>
+      <h2 class="h-small">Used on</h2>
+      <ul class="chips">{% for u in fam.uses %}<li>{{ u }}</li>{% endfor %}</ul>
+      <div class="hero-actions">
+        <a class="btn btn-red" href="/contact#enquiry" data-add="{{ fam.title }}">Enquire about this range</a>
+        <a class="btn btn-outline" href="https://wa.me/{{ company.whatsapp }}?text={{ ('Hello, I would like the price and stock of NEU-TECH ' ~ fam.title ~ '.')|urlencode }}" target="_blank" rel="noopener">{{ icon("chat", 18) }} Ask on WhatsApp</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% if rows %}
+<section class="section section-alt">
+  <div class="wrap">
+    <div class="section-head section-head-row">
+      <div><p class="eyebrow">Size chart</p><h2>{{ fam.short }} sizes</h2>
+        {% if fam.kind == "patch" %}<p class="muted">Every size in Versa Cure (NTR) and Chemical Cure (CTR).</p>{% endif %}</div>
+      <a class="btn btn-outline" href="/catalogue.pdf" target="_blank">{{ icon("download", 18) }} Catalogue PDF</a>
+    </div>
+    {{ spec_table(fam, rows) }}
+    <p class="muted small">Tap <b>Enquire</b> on the sizes you need, then send one enquiry for all of them.</p>
+  </div>
+</section>
+{% endif %}
+
+{% if fam.kind == "patch" %}
+<section class="section">
+  <div class="wrap">
+    <div class="section-head"><p class="eyebrow">Choose your cure</p><h2>Versa Cure or Chemical Cure</h2></div>
+    {{ cure_cards(cure_types) }}
+  </div>
+</section>
+{% endif %}
+
+<section class="section{{ ' section-alt' if fam.kind == 'patch' }}">
+  <div class="wrap pager">
+    {% if prev %}<a class="pager-link" href="/products/{{ prev.slug }}">{{ icon("arrow-left", 18) }}<span><small>Previous</small>{{ prev.title }}</span></a>{% else %}<span></span>{% endif %}
+    {% if next %}<a class="pager-link pager-next" href="/products/{{ next.slug }}"><span><small>Next</small>{{ next.title }}</span>{{ icon("arrow", 18) }}</a>{% endif %}
+  </div>
+</section>
+{% endblock %}

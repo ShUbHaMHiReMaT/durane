@@ -1,0 +1,50 @@
+{% extends "site/base.html" %}
+{% from "site/_spec.html" import spec_table, cure_cards %}
+{% block title %}Product Catalogue | NEU-TECH Tyre & Tube Repair Products{% endblock %}
+{% block description %}Complete NEU-TECH product catalogue with size charts for BP bias patches, RD radial patches, Max Grip plug patches, chemicals and tools. Download the PDF.{% endblock %}
+{% block content %}
+<section class="page-hero">
+  <div class="wrap page-hero-row">
+    <div>
+      <nav class="crumbs"><a href="/">Home</a> / <span>Catalogue</span></nav>
+      <h1>Product Catalogue</h1>
+      <p class="lead">Every NEU-TECH product family with full size charts.</p>
+    </div>
+    <div class="hero-actions">
+      <a class="btn btn-red btn-lg" href="/catalogue.pdf" target="_blank">{{ icon("download", 18) }} Download PDF</a>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <nav class="toc" aria-label="Catalogue contents">
+      {% for f in families %}<a href="#{{ f.slug }}"><span>{{ "%02d"|format(loop.index) }}</span>{{ f.title }}</a>{% endfor %}
+    </nav>
+
+    {% for f in families %}
+    <article class="cat-block" id="{{ f.slug }}">
+      <div class="cat-head">
+        <span class="cat-no">{{ "%02d"|format(loop.index) }}</span>
+        <div><p class="eyebrow">{{ f.short }}</p><h2>{{ f.title }}</h2></div>
+      </div>
+      <div class="cat-body">
+        <div>
+          {% for p in f.text %}<p>{{ p }}</p>{% endfor %}
+          <ul class="ticks">{% for pt in f.points %}<li>{{ icon("check", 18) }}{{ pt }}</li>{% endfor %}</ul>
+        </div>
+        <div class="cat-imgs">
+          {% for img in f.images[:2] %}<a href="/static/catalog/{{ img }}" data-lightbox="{{ f.slug }}"><img src="/static/catalog/{{ img }}" alt="{{ caption(img) }}" loading="lazy"></a>{% endfor %}
+        </div>
+      </div>
+      {% if specs.get(f.slug) %}{{ spec_table(f, specs[f.slug], enquire=False) }}{% endif %}
+    </article>
+    {% endfor %}
+
+    <article class="cat-block">
+      <div class="cat-head"><span class="cat-no">{{ "%02d"|format(families|length + 1) }}</span><div><p class="eyebrow">Technology</p><h2>Versa Cure &amp; Chemical Cure</h2></div></div>
+      {{ cure_cards(cure_types) }}
+    </article>
+  </div>
+</section>
+{% endblock %}

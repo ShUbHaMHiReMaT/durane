@@ -1,0 +1,118 @@
+{% extends "site/base.html" %}
+{% block content %}
+<section class="hero">
+  <img class="hero-bg" src="/static/catalog/{{ hero }}" alt="" fetchpriority="high">
+  <div class="wrap hero-in">
+    <p class="eyebrow">NEU-TECH by Omkar Industries</p>
+    <h1>Tyre &amp; tube repair patches <span>built to hold.</span></h1>
+    <p class="lead">Bias patches, radial patches, plug patches and repair solutions for every tyre on the road and off it, from cars and trucks to tractors and earthmovers.</p>
+    <div class="hero-actions">
+      <a class="btn btn-red btn-lg" href="/products">Explore Products {{ icon("arrow", 18) }}</a>
+      <a class="btn btn-ghost-light btn-lg" href="/catalogue.pdf" target="_blank">{{ icon("download", 18) }} Download Catalogue</a>
+    </div>
+  </div>
+  <div class="wrap">
+    <ul class="hero-facts">
+      <li><b>{{ total }}</b><span>patch sizes in stock range</span></li>
+      <li><b>{{ families|length }}</b><span>product families</span></li>
+      <li><b>Bias &amp; Radial</b><span>car, truck, tractor &amp; OTR</span></li>
+      <li><b>Belagavi</b><span>made &amp; supplied from Karnataka</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Our range</p>
+      <h2>One brand for every tyre repair</h2>
+      <p>Choose a product family to see sizes, applications and box quantities.</p>
+    </div>
+    <div class="family-grid">
+      {% for f in families %}
+      <a class="family-card" href="/products/{{ f.slug }}">
+        <div class="fc-img"><img src="/static/catalog/{{ f.images[0] }}" alt="{{ f.title }}" loading="lazy"></div>
+        <div class="fc-body">
+          <span class="fc-tag">{{ icon(f.icon, 16) }} {{ f.short }}</span>
+          <h3>{{ f.title }}</h3>
+          <p>{{ f.summary }}</p>
+          <span class="fc-more">{% if counts[f.slug] %}{{ counts[f.slug] }} sizes · {% endif %}View details {{ icon("arrow", 16) }}</span>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section section-dark">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Applications</p>
+      <h2>Repairs for every vehicle</h2>
+    </div>
+    <ul class="app-strip">
+      {% for ic, label in applications %}<li>{{ icon(ic, 34) }}<span>{{ label }}</span></li>{% endfor %}
+    </ul>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap split">
+    <div>
+      <p class="eyebrow">Why NEU-TECH</p>
+      <h2>Made for a repair that lasts</h2>
+      <p class="muted">A patch is only as good as its bond and its construction. NEU-TECH patches are built to match the tyre they repair, so the repair flexes with the tyre and stays sealed.</p>
+      <div class="strength-grid">
+        {% for ic, title, text in strengths %}
+        <div class="strength">{{ icon(ic, 26) }}<div><h3>{{ title }}</h3><p>{{ text }}</p></div></div>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="split-img">
+      <img src="/static/catalog/professional-tyre-repair-solutions.jpg" alt="NEU-TECH patches, solutions and repair tools" loading="lazy">
+    </div>
+  </div>
+</section>
+
+<section class="section section-alt">
+  <div class="wrap split split-rev">
+    <div class="split-img">
+      <img src="/static/catalog/radial-patch-repair-in-use.jpg" alt="Technician fitting a NEU-TECH radial patch" loading="lazy">
+    </div>
+    <div>
+      <p class="eyebrow">Repair guide</p>
+      <h2>Right patch. Right method.</h2>
+      <p class="muted">Follow six simple steps for a clean, strong repair, and use our guide to pick the correct patch for the tyre and injury.</p>
+      <ol class="steps-mini">
+        {% for title, text in steps %}<li><b>{{ title }}</b><span>{{ text }}</span></li>{% endfor %}
+      </ol>
+      <a class="btn btn-dark" href="/repair-guide">Open the Repair Guide {{ icon("arrow", 18) }}</a>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head section-head-row">
+      <div><p class="eyebrow">Gallery</p><h2>The NEU-TECH range</h2></div>
+      <a class="btn btn-outline" href="/gallery">View all photos {{ icon("arrow", 18) }}</a>
+    </div>
+    <div class="gallery-grid">
+      {% for img in gallery %}
+      <a class="g-item" href="/static/catalog/{{ img }}" data-lightbox="home"><img src="/static/catalog/{{ img }}" alt="{{ caption(img) }}" loading="lazy"></a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section section-alt">
+  <div class="wrap dist-band">
+    <div>
+      <p class="eyebrow">Partner with us</p>
+      <h2>Become a NEU-TECH distributor</h2>
+      <p class="muted">We are growing our dealer and distributor network. Get a complete repair range, ready stock in every size and support from the manufacturer.</p>
+    </div>
+    <a class="btn btn-red btn-lg" href="/distributor">Apply Now {{ icon("arrow", 18) }}</a>
+  </div>
+</section>
+{% endblock %}

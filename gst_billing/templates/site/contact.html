@@ -1,0 +1,36 @@
+{% extends "site/base.html" %}
+{% from "site/_form.html" import enquiry_form %}
+{% block title %}Contact Us | Omkar Industries, Belagavi | NEU-TECH{% endblock %}
+{% block description %}Contact Omkar Industries, Belagavi, for NEU-TECH tyre repair patches. Call or WhatsApp {{ company.phone_display }}, or send an enquiry online.{% endblock %}
+{% block content %}
+<section class="page-hero">
+  <div class="wrap">
+    <nav class="crumbs"><a href="/">Home</a> / <span>Contact</span></nav>
+    <h1>Contact Us</h1>
+    <p class="lead">Call, WhatsApp or send an enquiry. We will get back to you with sizes, availability and pricing.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap contact-layout">
+    <div class="contact-cards">
+      <a class="c-card" href="tel:+91{{ company.phone }}">{{ icon("phone", 26) }}<div><h3>Call us</h3><p>{{ company.phone_display }}</p></div></a>
+      <a class="c-card" href="https://wa.me/{{ company.whatsapp }}" target="_blank" rel="noopener">{{ icon("chat", 26) }}<div><h3>WhatsApp</h3><p>{{ company.phone_display }}</p></div></a>
+      <a class="c-card" href="mailto:{{ company.email }}">{{ icon("mail", 26) }}<div><h3>E-mail</h3><p>{{ company.email }}</p></div></a>
+      <div class="c-card">{{ icon("pin", 26) }}<div><h3>Head Office</h3><p>{{ company.name }}<br>{{ company.head_office_lines|join("<br>")|safe }}</p></div></div>
+      <div class="c-card">{{ icon("pin", 26) }}<div><h3>Industrial Unit</h3><p>{{ company.address_lines|join("<br>")|safe }}</p>
+        <a class="link" href="https://www.google.com/maps/search/?api=1&query={{ company.map_query|urlencode }}" target="_blank" rel="noopener">Get directions {{ icon("arrow", 16) }}</a></div></div>
+    </div>
+    <div class="form-card" id="enquiry">
+      <h2>Send an enquiry</h2>
+      <p class="muted">Add the sizes you need and we will reply with a quote.</p>
+      {{ enquiry_form("/contact#enquiry", data, error, sent) }}
+    </div>
+  </div>
+</section>
+
+<section class="map-wrap">
+  <iframe title="Omkar Industries location" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+          src="https://www.google.com/maps?q={{ company.map_query|urlencode }}&output=embed"></iframe>
+</section>
+{% endblock %}

@@ -1,0 +1,21 @@
+# --- never commit: secrets and business data ---
+gst_billing/secret.key
+gst_billing/billing.db
+gst_billing/billing.db-*
+gst_billing/uploads/
+*.key
+.env
+
+# real invoices, e-way bills, internal price lists and source documents
+*.pdf
+*.docx
+!gst_billing/static/**/*.pdf
+
+# original photos (the website uses the named copies in gst_billing/static/catalog/)
+/1000*.png
+/1000*.jpeg
+/logo.png
+
+# --- build junk ---
+__pycache__/
+*.pyc

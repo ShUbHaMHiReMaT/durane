@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Billing | NEU-TECH</title>
+  <link rel="icon" href="/static/catalog/omkar-industries-logo.png">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body data-base="{{ admin_base }}">
+  <header class="top">
+    <a class="brand" href="#/"><img src="/static/catalog/omkar-industries-logo.png" alt=""><span>NEU-TECH <small>Billing</small></span></a>
+    <nav>
+      <a href="#/" data-nav="dashboard">Bills</a>
+      <a href="#/new" data-nav="new">New Bill</a>
+      <a href="#/enquiries" data-nav="enquiries">Enquiries <span class="count" id="enq-count" hidden></span></a>
+      <a href="#/products" data-nav="products">Products</a>
+      <a href="#/clients" data-nav="clients">Clients</a>
+      <a href="#/settings" data-nav="settings">Settings</a>
+    </nav>
+    <div class="top-right">
+      <a href="/" target="_blank">View website</a>
+      <a href="{{ admin_base }}/logout">Log out</a>
+    </div>
+  </header>
+  <main id="view"></main>
+  <div id="toast" class="toast"></div>
+  <datalist id="product-list"></datalist>
+  <datalist id="client-list"></datalist>
+  <script src="/static/app.js"></script>
+</body>
+</html>

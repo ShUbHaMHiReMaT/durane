@@ -1,0 +1,59 @@
+{% extends "site/base.html" %}
+{% block title %}Tyre Repair Guide: Choose the Right Patch | NEU-TECH{% endblock %}
+{% block description %}Which patch for which tyre and injury, and the six-step NEU-TECH repair method: inspect, clean, buff, apply solution, fit the patch and stitch.{% endblock %}
+{% block content %}
+<section class="page-hero">
+  <div class="wrap">
+    <nav class="crumbs"><a href="/">Home</a> / <span>Repair Guide</span></nav>
+    <h1>Tyre Repair Guide</h1>
+    <p class="lead">Choose the correct patch, then follow the method for a repair that lasts.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head"><p class="eyebrow">Step 1</p><h2>Which patch do I need?</h2></div>
+    <div class="selector">
+      {% for need, product, slug in selector %}
+      <a class="sel-row" href="/products/{{ slug }}">
+        <span class="sel-need">{{ need }}</span>
+        <span class="sel-arrow">{{ icon("arrow", 18) }}</span>
+        <span class="sel-product">{{ product }}</span>
+      </a>
+      {% endfor %}
+    </div>
+    <div class="note">{{ icon("shield", 20) }}<p><b>Important:</b> use radial patches only in radial tyres and bias patches only in bias tyres.
+      A tyre with an injury larger than the patch range, a damaged bead, or run-flat damage should be checked by a tyre specialist.</p></div>
+  </div>
+</section>
+
+<section class="section section-alt">
+  <div class="wrap">
+    <div class="section-head"><p class="eyebrow">Step 2</p><h2>How to repair with NEU-TECH patches</h2></div>
+    <ol class="steps">
+      {% for title, text in steps %}<li><span class="step-no">{{ loop.index }}</span><h3>{{ title }}</h3><p>{{ text }}</p></li>{% endfor %}
+    </ol>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap split">
+    <div>
+      <p class="eyebrow">Plug patches</p>
+      <h2>Neu-Plug specification chart</h2>
+      <p class="muted">Stem size, patch size and the injury size each Max Grip plug patch repairs.</p>
+      <a class="btn btn-dark" href="/products/max-grip-plug-patches">See plug patch sizes {{ icon("arrow", 18) }}</a>
+    </div>
+    <a class="split-img" href="/static/catalog/neu-plug-specification-chart.jpg" data-lightbox="chart"><img src="/static/catalog/neu-plug-specification-chart.jpg" alt="Neu-Plug series specification chart" loading="lazy"></a>
+  </div>
+</section>
+
+<section class="section section-alt">
+  <div class="wrap narrow">
+    <div class="section-head"><p class="eyebrow">FAQ</p><h2>Common questions</h2></div>
+    <div class="faq">
+      {% for q, a in faq %}<details><summary>{{ q }}{{ icon("chevron", 20) }}</summary><p>{{ a }}</p></details>{% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}
