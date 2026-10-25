@@ -77,7 +77,12 @@ const PUBLIC_ROOTS = new Set(["", "about", "products", "repair-guide", "gallery"
   "distributor", "static", "robots.txt", "sitemap.xml", "api", "billing", "favicon.ico", "enquiry", "apply", "404.html"]);
 
 export function checkAdminPath(raw) {
-  const path = "/" + String(raw || "").trim().replace(/^\/+|\/+$/g, "");
+  // accepts "/office-x", "office-x", a full https://site/office-x address, with stray quotes or spaces
+  let value = String(raw || "").trim().replace(/^["']+|["']+$/g, "").trim();
+  if (/^https?:\/\//i.test(value)) {
+    try { value = new URL(value).pathname; } catch { /* keep as typed */ }
+  }
+  const path = "/" + value.replace(/^\/+|\/+$/g, "");
   if (!/^\/[A-Za-z0-9][A-Za-z0-9_-]{5,39}$/.test(path)) return [null, "Use 6 to 40 letters, numbers, - or _ (no spaces or slashes)"];
   const low = path.toLowerCase();
   if (PUBLIC_ROOTS.has(low.slice(1)) || /^\/(api|billing|static)/.test(low)) {
