@@ -1,5 +1,5 @@
 {% extends "site/base.html" %}
-{% from "site/_spec.html" import spec_table, cure_cards %}
+{% from "site/_spec.html" import spec_table, cure_cards with context %}
 {% block title %}{{ fam.title }} ({{ fam.short }}) | NEU-TECH{% endblock %}
 {% block description %}{{ fam.summary }} NEU-TECH by Omkar Industries, Belagavi.{% endblock %}
 {% block og_image %}{{ fam.images[0] }}{% endblock %}
@@ -30,8 +30,8 @@
       <h2 class="h-small">Used on</h2>
       <ul class="chips">{% for u in fam.uses %}<li>{{ u }}</li>{% endfor %}</ul>
       <div class="hero-actions">
-        <a class="btn btn-red" href="/contact#enquiry" data-add="{{ fam.title }}">Enquire about this range</a>
-        <a class="btn btn-outline" href="https://wa.me/{{ company.whatsapp }}?text={{ ('Hello, I would like the price and stock of NEU-TECH ' ~ fam.title ~ '.')|urlencode }}" target="_blank" rel="noopener">{{ icon("chat", 18) }} Ask on WhatsApp</a>
+        <a class="btn btn-red" href="{{ wa('Hello, I would like the price and stock of NEU-TECH ' ~ fam.title ~ '.') }}" target="_blank" rel="noopener">{{ icon("chat", 18) }} Ask on WhatsApp</a>
+        <a class="btn btn-outline" href="tel:+91{{ company.phone }}">{{ icon("phone", 18) }} Call {{ company.phone_display }}</a>
       </div>
     </div>
   </div>
@@ -46,7 +46,7 @@
       <a class="btn btn-outline" href="/catalogue.pdf" target="_blank">{{ icon("download", 18) }} Catalogue PDF</a>
     </div>
     {{ spec_table(fam, rows) }}
-    <p class="muted small">Tap <b>Enquire</b> on the sizes you need, then send one enquiry for all of them.</p>
+    <p class="muted small">Tap <b>WhatsApp</b> next to any size to ask for its price and stock.</p>
   </div>
 </section>
 {% endif %}

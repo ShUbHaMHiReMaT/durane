@@ -1,4 +1,4 @@
-// NEU-TECH website: mobile menu, enquiry basket, product search, lightbox, scroll effects
+// NEU-TECH website: mobile menu, product search, lightbox, scroll effects
 (() => {
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
@@ -36,68 +36,6 @@
       e.preventDefault(); dd.classList.add("open");
     }
   });
-
-  // ---- enquiry basket: sizes the visitor picked, carried into the enquiry form
-  const KEY = "neutech-enquiry";
-  const load = () => { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch { return []; } };
-  const save = list => { try { localStorage.setItem(KEY, JSON.stringify(list)); } catch { /* private mode */ } };
-  let basket = load();
-  const refresh = () => {
-    $$(".basket-count").forEach(el => { el.hidden = !basket.length; el.textContent = basket.length; });
-    $$(".add-btn[data-add]").forEach(b => {
-      const on = basket.includes(b.dataset.add);
-      b.classList.toggle("added", on);
-      const label = b.querySelector(".add-label");
-      if (label) label.textContent = on ? "Added" : "Enquire";
-      b.setAttribute("aria-label", `${on ? "Remove" : "Add"} ${b.dataset.add} ${on ? "from" : "to"} enquiry`);
-    });
-    const field = $("#basket-field");
-    if (field && !field.value && basket.length) field.value = basket.join(", ");
-  };
-  document.addEventListener("click", e => {
-    const b = e.target.closest("[data-add]");
-    if (!b) return;
-    const item = b.dataset.add;
-    if (b.classList.contains("add-btn")) {
-      e.preventDefault();
-      basket = basket.includes(item) ? basket.filter(x => x !== item) : [...basket, item];
-    } else if (!basket.includes(item)) {
-      basket.push(item);
-    }
-    save(basket);
-    refresh();
-  });
-  // ---- enquiry forms: show the result passed back as ?sent=1 or ?error=<code>
-  const FORM_ERRORS = {
-    details: "Please enter your name and a valid phone number.",
-    email: "Please enter a valid e-mail address, or leave it empty.",
-    limit: "We have received several messages from you. Please call or WhatsApp us instead.",
-    blocked: "Your message could not be sent. Please call or WhatsApp us instead.",
-  };
-  const params = new URLSearchParams(location.search);
-  const form = $("[data-form]");
-  if (form) {
-    if (params.get("sent") === "1") {
-      form.hidden = true;
-      $("[data-form-done]").hidden = false;
-      if ($("#enquiry")) { basket = []; save(basket); }  // clear the basket once an enquiry has been sent
-    } else if (FORM_ERRORS[params.get("error")]) {
-      const err = $("[data-form-error]");
-      err.textContent = FORM_ERRORS[params.get("error")];
-      err.hidden = false;
-    }
-    form.addEventListener("submit", e => {  // quick check before sending
-      const name = form.elements.name.value.trim(), phone = form.elements.phone.value.replace(/\D/g, "");
-      if (!name || phone.length < 10) {
-        e.preventDefault();
-        const err = $("[data-form-error]");
-        err.textContent = FORM_ERRORS.details;
-        err.hidden = false;
-        err.scrollIntoView({ block: "center", behavior: "smooth" });
-      }
-    });
-  }
-  refresh();
 
   // ---- product search
   const search = $("#product-search");

@@ -61,7 +61,6 @@ async function route() {
     if (page === "edit") return renderForm(+id);
     if (page === "view") return renderInvoice(+id);
     if (page === "products") return renderProducts();
-    if (page === "enquiries") return renderEnquiries();
     if (page === "clients") return renderClients();
     if (page === "settings") return renderSettings();
     view.innerHTML = `<div class="empty">Page not found.</div>`;
@@ -750,60 +749,13 @@ async function renderProducts() {
   };
 }
 
-// ------------------------------------------------------------------ website enquiries
-const ENQ_STATUS = { new: "New", contacted: "Contacted", closed: "Closed" };
-
-async function renderEnquiries() {
-  const list = await api(BASE + "/api/enquiries");
-  view.innerHTML = `<div class="bar"><h1>Website Enquiries</h1>
-      <input id="esearch" class="search" placeholder="Search name, phone or city"></div>
-    <div class="hint" style="margin-bottom:10px">Enquiries and distributor applications sent from the website contact forms.</div>
-    ${list.length ? `<div class="table-wrap"><table class="stack">
-      <thead><tr><th>Received</th><th>Type</th><th>Name</th><th>Phone</th><th>City</th><th>Products / Area</th><th>Message</th><th>Status</th><th></th></tr></thead>
-      <tbody>${list.map(e => `<tr data-id="${e.id}" data-q="${esc((e.name + " " + e.phone + " " + e.city + " " + e.company).toLowerCase())}">
-        <td data-label="Received">${esc(fmtDate(e.created_at.slice(0, 10)))}</td>
-        <td data-label="Type">${e.kind === "distributor" ? "<b>Distributor</b>" : "Enquiry"}</td>
-        <td data-label="Name"><b>${esc(e.name)}</b>${e.company ? `<br><span class="hint">${esc(e.company)}</span>` : ""}</td>
-        <td data-label="Phone"><a href="tel:${esc(e.phone)}">${esc(e.phone)}</a>
-          ${e.email ? `<br><a href="mailto:${esc(e.email)}">${esc(e.email)}</a>` : ""}</td>
-        <td data-label="City">${esc(e.city)}</td>
-        <td data-label="Products / Area">${esc(e.products)}</td>
-        <td class="full" data-label="Message">${esc(e.message)}</td>
-        <td data-label="Status"><select class="e-status">${Object.entries(ENQ_STATUS).map(([k, v]) =>
-          `<option value="${k}" ${k === e.status ? "selected" : ""}>${v}</option>`).join("")}</select></td>
-        <td class="full"><div class="actions">
-          <a class="btn small" target="_blank" href="https://wa.me/${waNumber(e.phone)}?text=${encodeURIComponent(`Hello ${e.name}, thank you for contacting NEU-TECH (Omkar Industries).`)}">WhatsApp</a>
-          <button class="small danger e-del">Delete</button></div></td>
-      </tr>`).join("")}</tbody></table></div>` : `<div class="card empty">No enquiries yet. Enquiries from the website contact and distributor forms appear here.</div>`}`;
-  $$("tbody tr").forEach(tr => {
-    $(".e-status", tr).onchange = async e => {
-      await api(`${BASE}/api/enquiries/${tr.dataset.id}`, { method: "PUT", body: { status: e.target.value } });
-      toast("Status updated");
-      refreshEnquiryCount();
-    };
-    $(".e-del", tr).onclick = async () => {
-      if (!confirm("Delete this enquiry?")) return;
-      await api(`${BASE}/api/enquiries/${tr.dataset.id}`, { method: "DELETE" });
-      tr.remove();
-      refreshEnquiryCount();
-    };
-  });
-  const s = $("#esearch");
-  s.oninput = () => $$("tbody tr").forEach(tr => (tr.style.display = tr.dataset.q.includes(s.value.trim().toLowerCase()) ? "" : "none"));
-}
-
+// ------------------------------------------------------------------ helpers
 function waNumber(phone) {
   let p = String(phone || "").split(/[\/,]/)[0].replace(/\D/g, "");
   if (p.length === 10) p = "91" + p;
   return p;
 }
 
-async function refreshEnquiryCount() {
-  const n = (await api(BASE + "/api/bootstrap")).new_enquiries;
-  const el = $("#enq-count");
-  el.hidden = !n;
-  el.textContent = n;
-}
 
 // ------------------------------------------------------------------ clients
 async function renderClients() {
@@ -978,8 +930,6 @@ async function renderSettings() {
 // ------------------------------------------------------------------ start
 (async () => {
   BOOT = await api(BASE + "/api/bootstrap");
-  $("#enq-count").hidden = !BOOT.new_enquiries;
-  $("#enq-count").textContent = BOOT.new_enquiries;
   window.addEventListener("hashchange", route);
   route();
 })();

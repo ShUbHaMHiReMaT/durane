@@ -7,8 +7,8 @@ Runs entirely on **Cloudflare Workers** (live at https://durane.cipherverse.work
 |---|---|
 | Public website (home, products, size charts, repair guide, gallery, catalogue, contact, distributor) | Static files built by `build.py`, served directly |
 | Catalogue PDF | Generated during the build (`/catalogue.pdf`) |
-| Enquiry and distributor forms | Worker code (`src/`), saved in the **D1** database |
-| Billing (GST invoices, PDFs, e-Way Bill, clients, products, enquiries, backups) | Worker code + D1, at a **secret address** with a password |
+| Quotes, enquiries, distributor applications | WhatsApp and phone buttons on every page and next to every size (no forms) |
+| Billing (GST invoices, PDFs, e-Way Bill, clients, products, backups) | Worker code + D1, at a **secret address** with a password |
 
 ---
 
@@ -58,7 +58,7 @@ enter the `SETUP_CODE` and choose a password of at least 10 characters. Bookmark
 
 ### 5. Move your existing data (once)
 
-To copy bills, clients, products and enquiries from the old local version (`gst_billing/billing.db`):
+To copy bills, clients and products from the old local version (`gst_billing/billing.db`):
 
 ```bash
 python migrate_to_d1.py
@@ -78,9 +78,9 @@ Worker `durane` → **Settings → Domains & Routes → Add → Custom domain**.
 
 Everything is stored in the D1 database, which is **separate from the website**: deleting or redeploying the Worker does not delete it.
 
-1. **Download a full backup** in billing → **Settings → Backup & Restore**. It contains all bills, clients, products, enquiries, settings, the activity log, e-Way Bill PDFs and logos. Keep copies on your computer and Google Drive. Billing reminds you if you haven't downloaded one in 7 days.
+1. **Download a full backup** in billing → **Settings → Backup & Restore**. It contains all bills, clients, products, settings, the activity log, e-Way Bill PDFs and logos. Keep copies on your computer and Google Drive. Billing reminds you if you haven't downloaded one in 7 days.
 2. **Restore from backup** puts everything back, into the same site or a brand-new Cloudflare account.
-3. **Activity log** (Settings → Activity) records every change. Deleted bills, clients, products and enquiries can be brought back with **Restore**.
+3. **Activity log** (Settings → Activity) records every change. Deleted bills, clients and products can be brought back with **Restore**.
 4. **D1 Time Travel**: Cloudflare can rewind the database to any minute in the last 30 days:
    ```bash
    npx wrangler d1 time-travel info neutech
@@ -100,7 +100,6 @@ Never upload backups or exports anywhere public: they contain all your business 
 - Billing only exists at the secret `ADMIN_PATH` address. `/billing`, `/api` and other guesses show the normal "page not found". The address is never in `robots.txt`, the sitemap or any link. Change it any time in **Settings → Secret Billing Address**.
 - Password login (stored as a salted PBKDF2 hash), 12-hour signed sessions, lockout for 15 minutes after 5 wrong passwords; changing the password signs out every device.
 - Requests from other websites are blocked; strict Content-Security-Policy and other security headers on every page; billing is never cached or indexed.
-- Enquiry forms: hidden bot trap and max 5 messages per hour per visitor.
 
 **Forgot something?**
 
@@ -140,7 +139,7 @@ Then `npm run dev` and open http://localhost:8787.
 build.py              builds dist/ (static pages, catalogue PDF, headers, routes) and src/generated/data.json
 wrangler.jsonc        Cloudflare Workers configuration (name, static files, D1 binding)
 src/worker.js         Worker entry point
-src/                  server code: billing API, login, invoice PDF, e-Way Bill, enquiry forms, backups
+src/                  server code: billing API, login, invoice PDF, e-Way Bill, backups
 functions/            entry point if the project is ever deployed with Cloudflare Pages instead
 gst_billing/
   catalog.py          website content: product families, size charts, photos, company details

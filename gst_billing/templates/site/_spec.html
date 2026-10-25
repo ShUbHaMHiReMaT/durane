@@ -1,11 +1,11 @@
 {% from "site/_icons.html" import icon %}
-{# Size chart for one product family; enquire=True adds the "Enquire" buttons #}
+{# Size chart for one product family; enquire=True adds a WhatsApp button for each size #}
 {% macro spec_table(fam, rows, enquire=True) -%}
 <div class="table-scroll"><table class="spec">
   {% if fam.kind == "plug" %}
   <thead><tr><th>Product Code</th><th>Product</th><th>Plug Patch Size</th><th>Injury Size</th><th>Qty / Box</th>{% if enquire %}<th></th>{% endif %}</tr></thead>
   <tbody>{% for p in rows %}<tr><td><b>{{ p.code }}</b></td><td>{{ p.name }}</td><td>{{ p.size }}</td><td>{{ p.rating }}</td><td>{{ p.qty }}</td>
-    {% if enquire %}<td><button class="add-btn" data-add="{{ p.name }}">{{ icon("plus", 16) }}<span class="add-label">Enquire</span></button></td>{% endif %}</tr>{% endfor %}</tbody>
+    {% if enquire %}<td><a class="add-btn" href="{{ wa('Hello, please share the price and stock of NEU-TECH ' ~ p.name ~ ' (' ~ p.code ~ ').') }}" target="_blank" rel="noopener" aria-label="Ask about {{ p.name }} on WhatsApp">{{ icon("chat", 16) }}<span class="add-label">WhatsApp</span></a></td>{% endif %}</tr>{% endfor %}</tbody>
   {% else %}
   <thead>
     <tr><th colspan="2" class="th-group">Versa Cure</th><th colspan="2" class="th-group th-alt">Chemical Cure</th><th rowspan="2">Size (mm)</th><th rowspan="2">Ply Rating</th><th rowspan="2">Qty / Box</th>{% if enquire %}<th rowspan="2"></th>{% endif %}</tr>
@@ -13,7 +13,7 @@
   </thead>
   <tbody>{% for p in rows %}<tr><td>{{ p.code }}</td><td><b>{{ p.name }}</b>{% if p.crown %}<sup class="crown" title="Crown injury repair">*</sup>{% endif %}</td>
     <td>{{ p.chem_code }}</td><td>{{ p.chem_name }}</td><td>{{ p.size }}</td><td>{{ p.rating }}</td><td>{{ p.qty }}</td>
-    {% if enquire %}<td><button class="add-btn" data-add="{{ p.name }}">{{ icon("plus", 16) }}<span class="add-label">Enquire</span></button></td>{% endif %}</tr>{% endfor %}</tbody>
+    {% if enquire %}<td><a class="add-btn" href="{{ wa('Hello, please share the price and stock of NEU-TECH ' ~ p.name ~ ' (' ~ p.code ~ ').') }}" target="_blank" rel="noopener" aria-label="Ask about {{ p.name }} on WhatsApp">{{ icon("chat", 16) }}<span class="add-label">WhatsApp</span></a></td>{% endif %}</tr>{% endfor %}</tbody>
   {% endif %}
 </table></div>
 {% if fam.kind == "patch" and rows|selectattr("crown")|list %}<p class="muted small table-note">* Made specially for crown injury repairs.</p>{% endif %}

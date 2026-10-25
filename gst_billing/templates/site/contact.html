@@ -1,13 +1,12 @@
 {% extends "site/base.html" %}
-{% from "site/_form.html" import enquiry_form with context %}
 {% block title %}Contact Us | Omkar Industries, Belagavi | NEU-TECH{% endblock %}
-{% block description %}Contact Omkar Industries, Belagavi, for NEU-TECH tyre repair patches. Call or WhatsApp {{ company.phone_display }}, or send an enquiry online.{% endblock %}
+{% block description %}Contact Omkar Industries, Belagavi, for NEU-TECH tyre repair patches. Call or WhatsApp {{ company.phone_display }}, or e-mail us.{% endblock %}
 {% block content %}
 <section class="page-hero">
   <div class="wrap">
     <nav class="crumbs"><a href="/">Home</a> / <span>Contact</span></nav>
     <h1>Contact Us</h1>
-    <p class="lead">Call, WhatsApp or send an enquiry. We will get back to you with sizes, availability and pricing.</p>
+    <p class="lead">Call or WhatsApp us. We will get back to you with sizes, availability and pricing.</p>
   </div>
 </section>
 
@@ -21,10 +20,14 @@
       <div class="c-card">{{ icon("pin", 26) }}<div><h3>Industrial Unit</h3><p>{{ company.address_lines|join("<br>")|safe }}</p>
         <a class="link" href="https://www.google.com/maps/search/?api=1&query={{ company.map_query|urlencode }}" target="_blank" rel="noopener">Get directions {{ icon("arrow", 16) }}</a></div></div>
     </div>
-    <div class="form-card" id="enquiry">
-      <h2>Send an enquiry</h2>
-      <p class="muted">Add the sizes you need and we will reply with a quote.</p>
-      {{ enquiry_form("/enquiry", data, error, sent) }}
+    <div class="form-card wa-card" id="enquiry">
+      <h2>Get a quote on WhatsApp</h2>
+      <p class="muted">The quickest way to reach us. Send the sizes and quantities you need and we will reply with availability and pricing.</p>
+      <div class="wa-actions">
+        <a class="btn btn-red btn-lg" href="{{ wa('Hello Omkar Industries, I would like a quote for NEU-TECH repair patches. Sizes and quantities: ') }}" target="_blank" rel="noopener">{{ icon("chat", 20) }} WhatsApp {{ company.phone_display }}</a>
+        <a class="btn btn-outline btn-lg" href="tel:+91{{ company.phone }}">{{ icon("phone", 20) }} Call Us</a>
+      </div>
+      <p class="form-note">You can also e-mail us at <a href="mailto:{{ company.email }}">{{ company.email }}</a>.</p>
     </div>
   </div>
 </section>

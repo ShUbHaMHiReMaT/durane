@@ -285,6 +285,10 @@ a.c-card:hover { border-color: var(--red); color: var(--text); }
 .link { display: inline-flex; align-items: center; gap: 4px; font-weight: 600; margin-top: 8px; font-size: 14.5px; }
 .form-card { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 34px; box-shadow: var(--shadow); }
 .form-card h2 { font-size: 32px; margin-bottom: 4px; }
+.wa-actions { display: grid; gap: 12px; margin: 24px 0 8px; }
+.wa-actions .btn { width: 100%; }
+.wa-card .btn-red { background: #1fa855; }
+.wa-card .btn-red:hover { background: #178a45; }
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0 22px; }
 .form-grid label { display: flex; flex-direction: column; gap: 6px; font-size: 13.5px; font-weight: 600; color: var(--ink); }
 .form-grid .full { grid-column: 1 / -1; }
@@ -432,7 +436,7 @@ a.c-card:hover { border-color: var(--red); color: var(--text); }
   .lb-prev { left: calc(50% - 60px); }
   .lb-next { right: calc(50% - 60px); }
   .float-actions { display: none; }
-  .mobile-bar { display: grid; grid-template-columns: 1fr 1fr 1.3fr; position: fixed; left: 0; right: 0; bottom: 0; z-index: 45;
+  .mobile-bar { display: grid; grid-template-columns: 1fr 1.4fr; position: fixed; left: 0; right: 0; bottom: 0; z-index: 45;
     background: var(--ink); padding-bottom: env(safe-area-inset-bottom); box-shadow: 0 -4px 20px rgba(0, 0, 0, .2); }
   .mobile-bar a { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 9px 4px; color: #fff; font-size: 12.5px; font-weight: 600; }
   .mobile-bar a + a { border-left: 1px solid rgba(255, 255, 255, .1); }

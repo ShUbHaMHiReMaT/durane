@@ -1,5 +1,4 @@
 {% extends "site/base.html" %}
-{% from "site/_form.html" import enquiry_form with context %}
 {% block title %}Become a Distributor | NEU-TECH Tyre Repair Patches{% endblock %}
 {% block description %}Become a NEU-TECH distributor or dealer. Complete tyre and tube repair range, ready stock and direct manufacturer support from Omkar Industries, Belagavi.{% endblock %}
 {% block content %}
@@ -24,10 +23,13 @@
         <li>{{ icon("file", 26) }}<div><h3>Sales material</h3><p>Product catalogue, size charts and product photos for your shop.</p></div></li>
       </ul>
     </div>
-    <div class="form-card" id="apply">
-      <h2>Apply now</h2>
-      <p class="muted">Share a few details and our team will call you with distributor terms and the price list.</p>
-      {{ enquiry_form("/apply", data, error, sent, kind="distributor") }}
+    <div class="form-card wa-card" id="apply">
+      <h2>Apply on WhatsApp</h2>
+      <p class="muted">Send us a WhatsApp message with your firm name, city and the area you can cover. Our team will reply with distributor terms and the price list.</p>
+      <div class="wa-actions">
+        <a class="btn btn-red btn-lg" href="{{ wa('Hello Omkar Industries, I would like to become a NEU-TECH distributor. Firm name: , City: , Area I can cover: ') }}" target="_blank" rel="noopener">{{ icon("chat", 20) }} Apply on WhatsApp</a>
+        <a class="btn btn-outline btn-lg" href="tel:+91{{ company.phone }}">{{ icon("phone", 20) }} Call {{ company.phone_display }}</a>
+      </div>
     </div>
   </div>
 </section>

@@ -1,9 +1,8 @@
-// Entry point for every request that is not a plain static file (see dist/_routes.json):
-// the secret billing address, the two public form endpoints, and unknown paths (which fall through to 404).
+// Entry point for every request that is not a plain static file:
+// the secret billing address, and unknown paths (which fall through to the website's 404 page).
 import { adminPath } from "./auth.js";
 import { handleBilling } from "./billing-app.js";
 import { ensureDb } from "./db.js";
-import { handleEnquiry } from "./enquiry.js";
 import { sameOrigin, secure } from "./http.js";
 
 export async function handle(ctx) {
@@ -18,10 +17,6 @@ export async function handle(ctx) {
 
   // forged requests from other websites are refused
   if (!sameOrigin(request)) return secure(new Response("Request blocked", { status: 403 }));
-
-  if (request.method === "POST" && (path === "/enquiry" || path === "/apply")) {
-    return secure(await handleEnquiry(request, env, path === "/apply" ? "distributor" : "enquiry"));
-  }
 
   const base = await adminPath(env);
   if (base && (path === base || path.startsWith(base + "/"))) {

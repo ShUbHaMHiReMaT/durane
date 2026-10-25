@@ -1,5 +1,5 @@
 {% extends "site/base.html" %}
-{% from "site/_spec.html" import cure_cards %}
+{% from "site/_spec.html" import cure_cards with context %}
 {% block title %}Products | NEU-TECH Bias, Radial & Plug Repair Patches{% endblock %}
 {% block description %}Full NEU-TECH range: BP bias patches, RD radial patches for cars, trucks, tractors and earthmovers, Max Grip plug patches, chemicals and repair tools. Search every size.{% endblock %}
 {% block content %}
@@ -25,11 +25,11 @@
           <tr data-q="{{ (p.code ~ ' ' ~ p.name ~ ' ' ~ (p.chem_code or '') ~ ' ' ~ (p.chem_name or '') ~ ' ' ~ f.title ~ ' ' ~ p.name|replace('-', ' '))|lower }}">
             <td>{{ p.code }}</td><td><b>{{ p.name }}</b></td><td>{{ p.chem_name or "" }}</td><td>{{ p.size }}</td>
             <td><a href="/products/{{ f.slug }}">{{ f.title }}</a></td><td>{{ p.qty }}</td>
-            <td><button class="add-btn" data-add="{{ p.name }}">{{ icon("plus", 16) }}<span class="add-label">Enquire</span></button></td></tr>
+            <td><a class="add-btn" href="{{ wa('Hello, please share the price and stock of NEU-TECH ' ~ p.name ~ ' (' ~ p.code ~ ').') }}" target="_blank" rel="noopener" aria-label="Ask about {{ p.name }} on WhatsApp">{{ icon("chat", 16) }}<span class="add-label">WhatsApp</span></a></td></tr>
         {% endfor %}{% endfor %}
         </tbody>
       </table></div>
-      <p class="muted" id="no-results" hidden>No products match your search. <a href="/contact#enquiry">Ask us</a> and we will help.</p>
+      <p class="muted" id="no-results" hidden>No products match your search. <a href="{{ wa() }}" target="_blank" rel="noopener">Ask us on WhatsApp</a> and we will help.</p>
     </div>
 
     <div id="family-grid">

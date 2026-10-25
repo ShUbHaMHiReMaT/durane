@@ -1,26 +1,27 @@
 """Public website for NEU-TECH / Omkar Industries."""
 import os
-import re
-import time
 from datetime import date
+from urllib.parse import quote
 
-from flask import Blueprint, Response, abort, redirect, render_template, request, url_for
+from flask import Blueprint, Response, abort, render_template, request
 
 import catalog
-import db
 
 bp = Blueprint("site", __name__)
 
-# simple flood protection for the public forms: max 5 enquiries per hour per address
-_RECENT = {}
+
+def wa(text=""):
+    """WhatsApp chat link to the company number, optionally with a ready-made message."""
+    url = f"https://wa.me/{catalog.COMPANY['whatsapp']}"
+    return f"{url}?text={quote(text)}" if text else url
 
 
 @bp.app_context_processor
 def site_context():
-    # SITE_URL is set when building for Cloudflare Pages; locally the request's own address is used
+    # SITE_URL is set when building for Cloudflare; locally the request's own address is used
     site_url = (os.environ.get("SITE_URL") or request.url_root).rstrip("/")
     return dict(company=catalog.COMPANY, families=catalog.FAMILIES, year=date.today().year, caption=catalog.caption,
-                logo=catalog.LOGO, specs=catalog.SPECS, cure_types=catalog.CURE_TYPES, site_url=site_url)
+                logo=catalog.LOGO, specs=catalog.SPECS, cure_types=catalog.CURE_TYPES, site_url=site_url, wa=wa)
 
 
 @bp.get("/")
@@ -64,47 +65,14 @@ def gallery():
     return render_template("site/gallery.html", images=images)
 
 
-def save_enquiry(kind):
-    f = request.form
-    if f.get("website"):  # hidden field only bots fill in
-        return None, None
-    data = {k: (f.get(k) or "").strip()[:1000] for k in ("name", "company", "phone", "email", "city", "products", "message")}
-    if not data["name"] or len(re.sub(r"\D", "", data["phone"])) < 10:
-        return "Please enter your name and a valid phone number.", data
-    if data["email"] and not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", data["email"]):
-        return "Please enter a valid e-mail address, or leave it empty.", data
-    ip, now = request.remote_addr, time.time()
-    _RECENT[ip] = [t for t in _RECENT.get(ip, []) if now - t < 3600]
-    if len(_RECENT[ip]) >= 5:
-        return "We have received several messages from you. Please call or WhatsApp us instead.", data
-    _RECENT[ip].append(now)
-    with db.connect() as c:
-        c.execute("INSERT INTO enquiries (kind, name, company, phone, email, city, products, message) VALUES (?,?,?,?,?,?,?,?)",
-                  (kind, *data.values()))
-    return None, None
-
-
-@bp.route("/contact", methods=["GET", "POST"])
-@bp.post("/enquiry", endpoint="enquiry_post")
+@bp.get("/contact")
 def contact():
-    error, data = None, {}
-    if request.method == "POST":
-        error, data = save_enquiry("enquiry")
-        if not error:
-            return redirect(url_for("site.contact", sent=1) + "#enquiry")
-    return render_template("site/contact.html", error=error, data=data or {}, sent=request.args.get("sent"),
-                           contact_image=catalog.CONTACT_IMAGE)
+    return render_template("site/contact.html")
 
 
-@bp.route("/distributor", methods=["GET", "POST"])
-@bp.post("/apply", endpoint="apply_post")
+@bp.get("/distributor")
 def distributor():
-    error, data = None, {}
-    if request.method == "POST":
-        error, data = save_enquiry("distributor")
-        if not error:
-            return redirect(url_for("site.distributor", sent=1) + "#apply")
-    return render_template("site/distributor.html", error=error, data=data or {}, sent=request.args.get("sent"))
+    return render_template("site/distributor.html")
 
 
 @bp.get("/catalogue")

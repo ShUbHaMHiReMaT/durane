@@ -67,7 +67,7 @@
       <a href="/contact" class="{{ 'on' if path == '/contact' }}">Contact</a>
       <a href="/distributor" class="nav-mobile-only {{ 'on' if path == '/distributor' }}">Become a Distributor</a>
     </nav>
-    <a class="btn btn-red header-cta" href="/contact#enquiry">Get a Quote</a>
+    <a class="btn btn-red header-cta" href="{{ wa('Hello Omkar Industries, I would like a quote for NEU-TECH repair patches.') }}" target="_blank" rel="noopener">{{ icon("chat", 18) }} WhatsApp for Quote</a>
     <button class="menu-btn" id="menu-btn" aria-label="Open menu" aria-expanded="false" aria-controls="nav">{{ icon("menu") }}</button>
   </div>
 </header>
@@ -78,11 +78,11 @@
   <div class="wrap cta-in">
     <div>
       <h2>Need patches for your workshop or dealership?</h2>
-      <p>Tell us what you need and we will reply with sizes, availability and pricing.</p>
+      <p>WhatsApp or call us with the sizes you need. We reply with availability and pricing.</p>
     </div>
     <div class="cta-actions">
-      <a class="btn btn-red btn-lg" href="/contact#enquiry">Send an Enquiry {{ icon("arrow", 18) }}</a>
-      <a class="btn btn-ghost-light btn-lg" href="https://wa.me/{{ company.whatsapp }}?text={{ 'Hello Omkar Industries, I would like to know about NEU-TECH repair patches.'|urlencode }}" target="_blank" rel="noopener">{{ icon("chat", 18) }} WhatsApp Us</a>
+      <a class="btn btn-red btn-lg" href="{{ wa('Hello Omkar Industries, I would like to know about NEU-TECH repair patches.') }}" target="_blank" rel="noopener">{{ icon("chat", 18) }} WhatsApp Us</a>
+      <a class="btn btn-ghost-light btn-lg" href="tel:+91{{ company.phone }}">{{ icon("phone", 18) }} {{ company.phone_display }}</a>
     </div>
   </div>
 </section>
@@ -124,12 +124,11 @@
 </footer>
 
 <div class="float-actions" aria-label="Quick contact">
-  <a class="fab fab-wa" href="https://wa.me/{{ company.whatsapp }}" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">{{ icon("chat", 26) }}</a>
+  <a class="fab fab-wa" href="{{ wa() }}" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">{{ icon("chat", 26) }}</a>
 </div>
 <nav class="mobile-bar" aria-label="Quick actions">
-  <a href="tel:+91{{ company.phone }}">{{ icon("phone", 20) }}<span>Call</span></a>
-  <a href="https://wa.me/{{ company.whatsapp }}" target="_blank" rel="noopener">{{ icon("chat", 20) }}<span>WhatsApp</span></a>
-  <a href="/contact#enquiry" class="mb-quote">{{ icon("clipboard", 20) }}<span>Get Quote <em class="basket-count" hidden></em></span></a>
+  <a href="tel:+91{{ company.phone }}">{{ icon("phone", 20) }}<span>Call Us</span></a>
+  <a href="{{ wa('Hello Omkar Industries, I would like a quote for NEU-TECH repair patches.') }}" target="_blank" rel="noopener" class="mb-quote">{{ icon("chat", 20) }}<span>WhatsApp for Quote</span></a>
 </nav>
 
 <div class="lightbox" id="lightbox" hidden>
