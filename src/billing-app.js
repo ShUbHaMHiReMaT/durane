@@ -1,5 +1,7 @@
 // Billing at the secret address: login / setup pages and the billing API (/<secret>/api/...).
-import { adminPath, changeAdminPath, clearCookie, isLoggedIn, sessionCookie, setPassword, verifyPassword } from "./auth.js";
+import {
+  adminPath, changeAdminPath, clearCookie, isLoggedIn, sessionCookie, setPassword, setupCode, verifyPassword,
+} from "./auth.js";
 import { BILL_TYPES, PRICE_LISTS, STATES, calculate, ewayRequired, financialYear, num } from "./billing.js";
 import {
   BACKUP_TABLES, CLIENT_FIELDS, COMPANY_FIELDS, PRODUCT_FIELDS, SECRET_SETTINGS, addHit, all, clean, clearHits, countHits,
@@ -42,10 +44,7 @@ export async function handleBilling(ctx, base, sub) {
 
 async function setupPage(request, env, base, secure, hasPassword) {
   if (hasPassword) return redirect(`${base}/login`);
-  if (!env.SETUP_CODE) {
-    return html(loginPage({ mode: "setup", blocked: true,
-      error: "Add a SETUP_CODE environment variable in Cloudflare Pages settings, redeploy, then reload this page." }));
-  }
+  const code = await setupCode(env);
   let error = "";
   if (request.method === "POST") {
     const f = await request.formData();
@@ -53,7 +52,7 @@ async function setupPage(request, env, base, secure, hasPassword) {
     const pw = String(f.get("password") || ""), pw2 = String(f.get("password2") || "");
     if ((await countHits(env, "setup", ip, LOCK_SECONDS)) >= LOCK_AFTER) {
       error = "Too many wrong attempts. Try again in 15 minutes.";
-    } else if (String(f.get("code") || "").trim() !== env.SETUP_CODE) {
+    } else if (!code || String(f.get("code") || "").trim().toUpperCase() !== code.toUpperCase()) {
       await addHit(env, "setup", ip);
       await sleep(1000);
       error = "Wrong setup code.";
@@ -262,7 +261,7 @@ async function api(request, env, path, secure) {
 async function bootstrap(env) {
   const settings = {};
   for (const s of await all(env, "SELECT key, value FROM settings")) {
-    if (!["admin_password_hash", "session_secret", "auth_version"].includes(s.key)) settings[s.key] = s.value;
+    if (!SECRET_SETTINGS.includes(s.key)) settings[s.key] = s.value;
   }
   return json({
     companies: await all(env, "SELECT * FROM companies ORDER BY id"),

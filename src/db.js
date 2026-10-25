@@ -38,7 +38,7 @@ const SCHEMA = [
 
 // tables included in a full backup (settings are filtered so login secrets never leave the database)
 export const BACKUP_TABLES = ["companies", "clients", "products", "invoices", "enquiries", "settings", "activity"];
-export const SECRET_SETTINGS = ["admin_password_hash", "session_secret", "auth_version", "admin_path"];
+export const SECRET_SETTINGS = ["admin_password_hash", "session_secret", "auth_version", "admin_path", "setup_code"];
 
 /** Records a change. `before` is the full row as it was (kept so it can be recovered). */
 export function logActivity(env, action, entity, entityId, summary, before = null) {
@@ -73,7 +73,10 @@ async function init(db) {
   if (!(await db.prepare("SELECT COUNT(*) AS n FROM products").first()).n) {
     for (const p of DATA.products) stmts.push(insertStmt(db, "products", p));
   }
-  const settings = { ...DATA.settings, session_secret: randomHex(32), auth_version: randomHex(8) };
+  // setup_code: one-time code for creating the first billing password when no SETUP_CODE secret is set.
+  // Only someone with access to the Cloudflare account (D1 console) can read it.
+  const settings = { ...DATA.settings, session_secret: randomHex(32), auth_version: randomHex(8),
+                     setup_code: randomHex(5).toUpperCase() };
   for (const [k, v] of Object.entries(settings)) {
     stmts.push(db.prepare("INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)").bind(k, String(v)));
   }

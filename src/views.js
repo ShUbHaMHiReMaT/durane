@@ -61,7 +61,9 @@ export function loginPage({ mode, error = "", blocked = false }) {
     ${error ? `<p class="login-error">${e(error)}</p>` : ""}
     ${blocked ? "" : `
       <input type="text" name="username" value="admin" autocomplete="username" hidden>
-      ${setup ? `<label>Setup code (the SETUP_CODE you set in Cloudflare)<input name="code" type="password" autocomplete="off" required autofocus></label>` : ""}
+      ${setup ? `<label>Setup code<input name="code" type="password" autocomplete="off" required autofocus></label>
+        <p class="hint" style="margin:0">Find it in Cloudflare: Storage &amp; Databases &rarr; D1 &rarr; neutech &rarr; Console, run:
+          <code>SELECT value FROM settings WHERE key='setup_code'</code></p>` : ""}
       <label>Password<input type="password" name="password" autocomplete="${setup ? "new-password" : "current-password"}" required ${setup ? "" : "autofocus"}></label>
       ${setup ? `<label>Confirm password<input type="password" name="password2" autocomplete="new-password" required></label>` : ""}
       <button class="primary" type="submit">${setup ? "Save and open billing" : "Log in"}</button>`}

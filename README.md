@@ -39,22 +39,24 @@ Worker `durane` → **Settings → Build**:
 | `PYTHON_VERSION` | `3.11` |
 | `SITE_URL` | `https://durane.cipherverse.workers.dev` (or your own domain later) |
 
-### 3. Runtime secrets
+### 3. Open billing and set the password
 
-Worker `durane` → **Settings → Variables and Secrets → Add**, type **Secret**:
+Billing is at **https://durane.cipherverse.workers.dev/billing** (password protected).
 
-| Name | Value |
-|---|---|
-| `ADMIN_PATH` | your secret billing address, e.g. `/office-7qk2mz9x` (6–40 letters, numbers, `-`) |
-| `SETUP_CODE` | a one-time code you choose, used once to create the billing password |
+The first time, it asks for a **setup code**. Get it from Cloudflare:
+**Storage & Databases → D1 → neutech → Console**, run
 
-Push to GitHub (or click **Deployments → Retry build**). The database tables are created automatically on the first request.
+```sql
+SELECT value FROM settings WHERE key='setup_code'
+```
 
-### 4. Set the billing password
+Enter that code, choose a password of at least 10 characters, and bookmark the billing address.
 
-Open `https://durane.cipherverse.workers.dev<ADMIN_PATH>`
-(for example `https://durane.cipherverse.workers.dev/office-7qk2mz9x`),
-enter the `SETUP_CODE` and choose a password of at least 10 characters. Bookmark the address.
+### 4. Optional: a secret billing address
+
+To hide billing at an unguessable address instead of `/billing`, change it in billing → **Settings → Secret Billing Address**
+(or add a Worker secret named `ADMIN_PATH`, e.g. `npx wrangler secret put ADMIN_PATH`, then type `/office-7qk2mz9x`).
+A Worker secret `SETUP_CODE` can also replace the generated setup code.
 
 ### 5. Move your existing data (once)
 
@@ -97,16 +99,18 @@ Never upload backups or exports anywhere public: they contain all your business 
 
 ## Security
 
-- Billing only exists at the secret `ADMIN_PATH` address. `/billing`, `/api` and other guesses show the normal "page not found". The address is never in `robots.txt`, the sitemap or any link. Change it any time in **Settings → Secret Billing Address**.
+- Billing is at `/billing` unless you set a secret address (Settings → Secret Billing Address); then `/billing`, `/api` and other guesses show the normal "page not found". The billing address is never in `robots.txt`, the sitemap or any link.
 - Password login (stored as a salted PBKDF2 hash), 12-hour signed sessions, lockout for 15 minutes after 5 wrong passwords; changing the password signs out every device.
 - Requests from other websites are blocked; strict Content-Security-Policy and other security headers on every page; billing is never cached or indexed.
 
 **Forgot something?**
 
 ```bash
-# show the secret billing address
+# show the billing address (empty = /billing)
 npx wrangler d1 execute neutech --remote --command "SELECT value FROM settings WHERE key='admin_path'"
-# reset the password (then open the billing address and use SETUP_CODE again)
+# show the setup code
+npx wrangler d1 execute neutech --remote --command "SELECT value FROM settings WHERE key='setup_code'"
+# reset the password (then open the billing address and use the setup code again)
 npx wrangler d1 execute neutech --remote --command "DELETE FROM settings WHERE key='admin_password_hash'"
 ```
 

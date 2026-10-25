@@ -93,7 +93,9 @@ export function checkAdminPath(raw) {
 
 const cache = { path: undefined, at: 0 };
 
-/** The secret billing address: set in Settings, or first taken from the ADMIN_PATH environment variable. */
+export const DEFAULT_ADMIN_PATH = "/billing";
+
+/** The billing address: set in Settings, or taken from the ADMIN_PATH variable; otherwise /billing. */
 export async function adminPath(env) {
   if (cache.path !== undefined && Date.now() - cache.at < 30000) return cache.path;
   let path = await getSetting(env, "admin_path");
@@ -101,9 +103,14 @@ export async function adminPath(env) {
     const [p] = checkAdminPath(env.ADMIN_PATH);
     if (p) { await setSetting(env, "admin_path", p); path = p; }
   }
-  cache.path = path || null;
+  cache.path = path || DEFAULT_ADMIN_PATH;
   cache.at = Date.now();
   return cache.path;
+}
+
+/** One-time code for creating the first password: the SETUP_CODE secret, or the code generated in D1. */
+export async function setupCode(env) {
+  return String(env.SETUP_CODE || (await getSetting(env, "setup_code")) || "").trim();
 }
 
 export async function changeAdminPath(env, raw) {
