@@ -5,6 +5,7 @@
   --head: "Barlow Condensed", "Arial Narrow", Arial, sans-serif; --body: Inter, "Segoe UI", Arial, sans-serif;
 }
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 html { scroll-behavior: smooth; scroll-padding-top: 90px; }
 body { margin: 0; font: 16px/1.65 var(--body); color: var(--text); background: var(--white); -webkit-font-smoothing: antialiased; }
 img { max-width: 100%; display: block; }

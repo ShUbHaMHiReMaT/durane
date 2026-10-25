@@ -67,8 +67,36 @@
     save(basket);
     refresh();
   });
-  // clear the basket once an enquiry has been sent
-  if ($(".form-done") && $("#enquiry")) { basket = []; save(basket); }
+  // ---- enquiry forms: show the result passed back as ?sent=1 or ?error=<code>
+  const FORM_ERRORS = {
+    details: "Please enter your name and a valid phone number.",
+    email: "Please enter a valid e-mail address, or leave it empty.",
+    limit: "We have received several messages from you. Please call or WhatsApp us instead.",
+    blocked: "Your message could not be sent. Please call or WhatsApp us instead.",
+  };
+  const params = new URLSearchParams(location.search);
+  const form = $("[data-form]");
+  if (form) {
+    if (params.get("sent") === "1") {
+      form.hidden = true;
+      $("[data-form-done]").hidden = false;
+      if ($("#enquiry")) { basket = []; save(basket); }  // clear the basket once an enquiry has been sent
+    } else if (FORM_ERRORS[params.get("error")]) {
+      const err = $("[data-form-error]");
+      err.textContent = FORM_ERRORS[params.get("error")];
+      err.hidden = false;
+    }
+    form.addEventListener("submit", e => {  // quick check before sending
+      const name = form.elements.name.value.trim(), phone = form.elements.phone.value.replace(/\D/g, "");
+      if (!name || phone.length < 10) {
+        e.preventDefault();
+        const err = $("[data-form-error]");
+        err.textContent = FORM_ERRORS.details;
+        err.hidden = false;
+        err.scrollIntoView({ block: "center", behavior: "smooth" });
+      }
+    });
+  }
   refresh();
 
   // ---- product search

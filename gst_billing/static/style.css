@@ -121,6 +121,8 @@ iframe.pdf { width: 100%; height: 80vh; border: 1px solid #e1e4e8; border-radius
   color: #b91c1c; font-size: 11px; font-weight: 600; white-space: nowrap; }
 
 .search { width: 260px; }
+.backup-note { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 12px 16px; }
+.backup-note .btn { margin-left: auto; }
 .ewb-steps { margin: 8px 0 0; padding-left: 20px; display: grid; gap: 12px; }
 .ewb-steps .actions { margin-top: 6px; }
 .ewb-steps ul { margin: 4px 0 0; padding-left: 18px; }

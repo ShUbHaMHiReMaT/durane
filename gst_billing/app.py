@@ -108,7 +108,7 @@ def security_headers(resp):
     if request.path.startswith(("/billing", "/api/")):
         h["Cache-Control"] = "no-store"
         h["X-Robots-Tag"] = "noindex, nofollow, noarchive"
-        h["Referrer-Policy"] = "no-referrer"  # never pass the secret address to other sites
+        h["Referrer-Policy"] = "same-origin"  # never pass the secret address to other sites
     h.pop("Server", None)
     return resp
 
@@ -702,7 +702,7 @@ if __name__ == "__main__":
         sys.exit(f"Billing address: {admin_path()}")
 
     host = os.environ.get("BILLING_HOST", "127.0.0.1")
-    port = int(os.environ.get("BILLING_PORT", "5000"))
+    port = int(os.environ.get("BILLING_PORT") or os.environ.get("PORT") or "5000")  # PORT is set by cloud hosts
     print(f"\n  NEU-TECH website:  http://localhost:{port}")
     print(f"  Billing (secret, do not share):  http://localhost:{port}{admin_path()}")
     if not get_setting("admin_password_hash"):

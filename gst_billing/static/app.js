@@ -73,8 +73,20 @@ async function route() {
 // ------------------------------------------------------------------ dashboard
 let currentTab = sessionStorage.getItem("tab") || "omkar";
 
+/** Days since the last full backup was downloaded (null = never). */
+function daysSinceBackup() {
+  const last = BOOT.settings.last_backup_at;
+  if (!last) return null;
+  return Math.floor((new Date(BOOT.today) - new Date(last)) / 86400000);
+}
+
 async function renderDashboard() {
+  const days = daysSinceBackup();
+  const remind = days === null || days >= 7;
   view.innerHTML = `
+    ${remind ? `<div class="card alert backup-note"><b>Keep a copy of your data.</b>
+      ${days === null ? "You have not downloaded a backup yet." : `Your last backup was ${days} days ago.`}
+      <a class="btn small primary" href="#/settings/backup">Download backup</a></div>` : ""}
     <div class="bar"><h1>Bills</h1>
       <div class="actions"><input id="search" class="search" placeholder="Search invoice no. or client">
       <a class="btn primary" href="#/new">+ New Bill</a></div></div>
@@ -572,8 +584,12 @@ async function renderInvoice(id) {
     toast(r.problems.length ? "File downloaded, but please check the notes" : "e-Way Bill file downloaded");
   };
   if ($("#ewb-file")) $("#ewb-file").onchange = async e => {
+    const file = e.target.files[0];
     const fd = new FormData();
-    fd.append("file", e.target.files[0]);
+    fd.append("file", file);
+    const found = await readEwayPdf(file);  // number and date are read here in the browser
+    if (found.eway_bill_no) fd.append("eway_bill_no", found.eway_bill_no);
+    if (found.eway_bill_date) fd.append("eway_bill_date", found.eway_bill_date);
     try {
       const r = await api(ewb, { method: "POST", body: fd });
       toast(r.found.eway_bill_no ? `e-Way Bill ${r.found.eway_bill_no} attached` : "PDF attached. Enter the e-Way Bill number.");
@@ -596,6 +612,61 @@ async function renderInvoice(id) {
     location.hash = "#/";
   };
 }
+
+async function loadActivity() {
+  const tb = $("#activity");
+  if (!tb) return;
+  let rows;
+  try { rows = await api(BASE + "/api/activity"); } catch { tb.innerHTML = `<tr><td colspan="3" class="empty">Activity is not available.</td></tr>`; return; }
+  tb.innerHTML = rows.length ? rows.map(a => `<tr>
+      <td data-label="When (UTC)">${esc(fmtDate(a.at.slice(0, 10)))} ${esc(a.at.slice(11, 16))}</td>
+      <td data-label="What happened">${esc(a.summary)}</td>
+      <td class="num">${a.action === "delete" && a.has_data ? `<button class="small" data-undo="${a.id}">Restore</button>` : ""}</td>
+    </tr>`).join("") : `<tr><td colspan="3" class="empty">No changes yet.</td></tr>`;
+  $$("[data-undo]", tb).forEach(b => b.onclick = async () => {
+    try {
+      await api(`${BASE}/api/activity/${b.dataset.undo}/undo`, { method: "POST" });
+      toast("Restored");
+      loadActivity();
+    } catch (err) { toast(err.message, true); }
+  });
+}
+
+/** Reads the e-Way Bill number and date from the portal's PDF using pdf.js. Returns {} if it cannot. */
+async function readEwayPdf(file) {
+  try {
+    const pdfjs = await import("/static/vendor/pdfjs/pdf.min.mjs");
+    pdfjs.GlobalWorkerOptions.workerSrc = "/static/vendor/pdfjs/pdf.worker.min.mjs";
+    const doc = await pdfjs.getDocument({ data: new Uint8Array(await file.arrayBuffer()) }).promise;
+    let text = "";
+    for (let p = 1; p <= Math.min(doc.numPages, 3); p++) {
+      const content = await (await doc.getPage(p)).getTextContent();
+      text += content.items.map(i => i.str).join("\n") + "\n";
+    }
+    const out = {};
+    const no = text.match(/(?:Unique No\.?|E-?Way Bill No\.?)\s*:?\s*(\d{4}\s?\d{4}\s?\d{4})/i) || text.match(/(?<!\d)(\d{12})(?!\d)/);
+    if (no) out.eway_bill_no = no[1].replace(/\s/g, "");
+    const dt = text.match(/(?:Entered Date|Generated Date|Date)\s*:?\s*(\d{2})\/(\d{2})\/(\d{4})/i);
+    if (dt) out.eway_bill_date = `${dt[3]}-${dt[2]}-${dt[1]}`;
+    return out;
+  } catch (err) {
+    console.warn("Could not read the e-Way Bill PDF", err);
+    return {};
+  }
+}
+
+/** Shrinks an image to at most 600 px and returns it as PNG (logos are stored in the database). */
+async function resizeLogo(file) {
+  const img = await createImageBitmap(file);
+  const scale = Math.min(1, 600 / Math.max(img.width, img.height));
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.round(img.width * scale);
+  canvas.height = Math.round(img.height * scale);
+  canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+  return new Promise(res => canvas.toBlob(res, "image/png"));
+}
+
+const logoUrl = c => (c.logo === "db" ? `${BASE}/api/companies/${c.id}/logo` : `/static/logos/${c.logo}`);
 
 async function shareBill(inv, via) {
   const url = `${BASE}/api/invoices/${inv.id}/pdf`;
@@ -789,7 +860,7 @@ async function renderSettings() {
         ${c.kind !== "other" ? `<div><label>Invoice Prefix</label><input data-k="invoice_prefix" value="${esc(c.invoice_prefix)}">
           <div class="hint">Bill no. will be ${esc(c.invoice_prefix || "PREFIX")}/YY-YY/your number</div></div>` : ""}
         <div><label>Logo (shown on the bill)</label>
-          ${c.logo ? `<img class="logo-preview" src="/static/logos/${esc(c.logo)}?${Date.now()}">` : ""}
+          ${c.logo ? `<img class="logo-preview" src="${esc(logoUrl(c))}?${Date.now()}" alt="">` : ""}
           <input type="file" accept="image/*" class="logo"></div>
       </div>
       <div class="actions" style="justify-content:flex-end;margin-top:12px"><button class="primary save">Save</button></div></div>`;
@@ -803,6 +874,19 @@ async function renderSettings() {
         <div class="hint">GST rule: ₹ 50,000 (bill value including GST).</div></div>
       <div class="wide"><label>Terms & Conditions (printed on every bill)</label><textarea id="s-terms" rows="5">${esc(S.terms)}</textarea></div>
     </div><div class="actions" style="justify-content:flex-end;margin-top:12px"><button class="primary" id="s-save">Save</button></div></div>
+    <div class="card" id="backup"><h2>Backup &amp; Restore</h2>
+      <p class="hint" style="margin-top:0">Download a full backup regularly and keep it on your computer or Google Drive.
+        It contains everything (bills, clients, products, enquiries, settings, e-Way Bill PDFs and logos), so your data is
+        safe even if the website or the Cloudflare account is ever deleted.
+        ${BOOT.settings.last_backup_at ? `Last backup: <b>${fmtDate(BOOT.settings.last_backup_at)}</b>.` : "<b>No backup downloaded yet.</b>"}</p>
+      <div class="actions">
+        <a class="btn primary" id="bk-download" href="${BASE}/api/backup">Download Full Backup</a>
+        <label class="btn file-btn">Restore from Backup<input type="file" id="bk-restore" accept="application/json,.json" hidden></label>
+      </div></div>
+    <div class="card"><h2>Activity</h2>
+      <p class="hint" style="margin-top:0">Every change made in billing. Deleted items can be brought back with <b>Restore</b>.</p>
+      <div class="table-wrap"><table class="stack"><thead><tr><th>When (UTC)</th><th>What happened</th><th></th></tr></thead>
+        <tbody id="activity"><tr><td colspan="3" class="empty">Loading...</td></tr></tbody></table></div></div>
     <div class="card"><h2>Secret Billing Address</h2>
       <p class="hint" style="margin-top:0">Billing opens only at this address. It is not linked anywhere and does not show in search engines.
         Keep it private, like a password. Bookmark it after changing.</p>
@@ -826,6 +910,23 @@ async function renderSettings() {
     BOOT = await api(BASE + "/api/bootstrap");
     toast("Settings saved");
   };
+  $("#bk-download").onclick = () => setTimeout(async () => { BOOT = await api(BASE + "/api/bootstrap"); }, 3000);
+  $("#bk-restore").onchange = async e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (!confirm(`Restore "${file.name}"?\n\nAll current bills, clients, products and enquiries will be REPLACED by the ones in this backup. `
+                 + "Download a backup of the current data first if you are not sure.")) { e.target.value = ""; return; }
+    const fd = new FormData();
+    fd.append("file", file);
+    try {
+      const r = await api(BASE + "/api/restore", { method: "POST", body: fd });
+      toast(`Backup restored: ${r.counts.invoices} bills, ${r.counts.clients} clients, ${r.counts.products} products`);
+      BOOT = await api(BASE + "/api/bootstrap");
+      renderSettings();
+    } catch (err) { toast(err.message, true); }
+  };
+  loadActivity();
+  if (location.hash.includes("backup")) $("#backup").scrollIntoView();
   $("#adm-random").onclick = () => {
     const a = new Uint8Array(5);
     crypto.getRandomValues(a);
@@ -856,7 +957,11 @@ async function renderSettings() {
       try {
         await api(`${BASE}/api/companies/${id}`, { method: "PUT", body: d });
         const f = $(".logo", card).files[0];
-        if (f) { const fd = new FormData(); fd.append("logo", f); await api(`${BASE}/api/companies/${id}/logo`, { method: "POST", body: fd }); }
+        if (f) {
+          const fd = new FormData();
+          fd.append("logo", await resizeLogo(f), "logo.png");
+          await api(`${BASE}/api/companies/${id}/logo`, { method: "POST", body: fd });
+        }
         toast("Company saved");
         renderSettings();
       } catch (e) { toast(e.message, true); }

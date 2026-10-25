@@ -1,5 +1,5 @@
 {% extends "site/base.html" %}
-{% from "site/_form.html" import enquiry_form %}
+{% from "site/_form.html" import enquiry_form with context %}
 {% block title %}Contact Us | Omkar Industries, Belagavi | NEU-TECH{% endblock %}
 {% block description %}Contact Omkar Industries, Belagavi, for NEU-TECH tyre repair patches. Call or WhatsApp {{ company.phone_display }}, or send an enquiry online.{% endblock %}
 {% block content %}
@@ -24,7 +24,7 @@
     <div class="form-card" id="enquiry">
       <h2>Send an enquiry</h2>
       <p class="muted">Add the sizes you need and we will reply with a quote.</p>
-      {{ enquiry_form("/contact#enquiry", data, error, sent) }}
+      {{ enquiry_form("/enquiry", data, error, sent) }}
     </div>
   </div>
 </section>

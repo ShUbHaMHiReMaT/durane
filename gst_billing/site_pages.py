@@ -1,4 +1,5 @@
 """Public website for NEU-TECH / Omkar Industries."""
+import os
 import re
 import time
 from datetime import date
@@ -16,8 +17,10 @@ _RECENT = {}
 
 @bp.app_context_processor
 def site_context():
+    # SITE_URL is set when building for Cloudflare Pages; locally the request's own address is used
+    site_url = (os.environ.get("SITE_URL") or request.url_root).rstrip("/")
     return dict(company=catalog.COMPANY, families=catalog.FAMILIES, year=date.today().year, caption=catalog.caption,
-                logo=catalog.LOGO, specs=catalog.SPECS, cure_types=catalog.CURE_TYPES)
+                logo=catalog.LOGO, specs=catalog.SPECS, cure_types=catalog.CURE_TYPES, site_url=site_url)
 
 
 @bp.get("/")
@@ -82,6 +85,7 @@ def save_enquiry(kind):
 
 
 @bp.route("/contact", methods=["GET", "POST"])
+@bp.post("/enquiry", endpoint="enquiry_post")
 def contact():
     error, data = None, {}
     if request.method == "POST":
@@ -93,6 +97,7 @@ def contact():
 
 
 @bp.route("/distributor", methods=["GET", "POST"])
+@bp.post("/apply", endpoint="apply_post")
 def distributor():
     error, data = None, {}
     if request.method == "POST":

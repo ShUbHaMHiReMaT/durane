@@ -6,12 +6,12 @@
   <title>{% block title %}NEU-TECH Tyre & Tube Repair Patches | Omkar Industries, Belagavi{% endblock %}</title>
   <meta name="description" content="{% block description %}NEU-TECH tyre and tube repair patches by Omkar Industries, Belagavi: bias patches, radial patches for cars, trucks, tractors and earthmovers, Max Grip plug patches, vulcanizing solution and repair tools.{% endblock %}">
   <meta name="theme-color" content="#121417">
-  <link rel="canonical" href="{{ request.base_url }}">
+  <link rel="canonical" href="{{ site_url }}{{ request.path }}">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="NEU-TECH by Omkar Industries">
   <meta property="og:title" content="{{ self.title() }}">
   <meta property="og:description" content="{{ self.description() }}">
-  <meta property="og:image" content="{{ request.url_root }}static/catalog/{% block og_image %}neu-tech-full-range-display.jpg{% endblock %}">
+  <meta property="og:image" content="{{ site_url }}/static/catalog/{% block og_image %}neu-tech-full-range-display.jpg{% endblock %}">
   <link rel="icon" href="/static/catalog/{{ logo }}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,8 +26,8 @@
     "description": "Manufacturer and supplier of NEU-TECH tyre and tube repair patches and repair solutions.",
     "telephone": "+91{{ company.phone }}",
     "email": "{{ company.email }}",
-    "image": "{{ request.url_root }}static/catalog/{{ logo }}",
-    "url": "{{ request.url_root }}",
+    "image": "{{ site_url }}/static/catalog/{{ logo }}",
+    "url": "{{ site_url }}/",
     "address": {"@type": "PostalAddress", "streetAddress": "{{ company.address_lines[0] }}, {{ company.address_lines[1] }}",
                 "addressLocality": "Belagavi", "addressRegion": "Karnataka", "postalCode": "590016", "addressCountry": "IN"}
   }
